@@ -14,3 +14,7 @@ input {
 	height: 20px;
 	text-align: center;
 }
+
+body {
+	margin: 0;
+}

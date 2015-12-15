@@ -19,4 +19,5 @@ function getMouseXY (e) {
         return true;
 }
 
-document.onmousemove = getMouseXY;
+var el = document.body;
+el.addEventListener("mousemove", getMouseXY, false);
