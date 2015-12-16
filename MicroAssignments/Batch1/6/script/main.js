@@ -1,4 +1,4 @@
-var k = 0;
+
 
 function verificare() {
 var nume = document.getElementById("name").value;
@@ -7,26 +7,16 @@ if (vector.length === 2)
 {
 	if((vector[0].length >=3) && (vector[1].length >=3))
 	{
-		k = 1;
+		document.getElementById("container").className = "valid";
 	}
 	else
 	{
-		k = 0;
+		document.getElementById("container").className = "";
 	}
 }
 else 
 {
-	k = 0;
-}
-
-if(k === 1)
-{
-	document.getElementById("container").className = "valid";
-}
-else
-{
 	document.getElementById("container").className = "";
-
 }
 
 }
