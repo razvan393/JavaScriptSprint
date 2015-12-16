@@ -6,11 +6,11 @@ function messaging (evt) {
 	if(mesaj.length > 0)
 	{
 	contain.insertAdjacentHTML("beforeend","<div><img src='images/images.png' /><div class='add'><p>"+mesaj+"</p><span>John Dow</span></div></div>");
-	locMesaj.value = ""; 
+	locMesaj.value = "";
+	locMesaj.focus(); 
+	contain.lastChild.scrollIntoView();
 	}
-
 }
-
 
 var buton = document.getElementById("form1");
 buton.addEventListener("submit", messaging, false);
