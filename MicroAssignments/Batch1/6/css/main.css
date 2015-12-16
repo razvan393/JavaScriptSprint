@@ -1,0 +1,25 @@
+div,
+input {
+	display: inline-block;
+}
+
+.hide {
+	display: none;
+}
+
+.red,
+.green {
+	border: 1px solid #000;
+	width: 100px;
+	height: 20px;
+	color: #fff;
+	text-align: center;
+}
+
+.red {
+	background-color: red;
+}
+
+.green {
+	background-color: green;
+}
