@@ -1,0 +1,39 @@
+form>div {
+	width: 20%;
+}
+
+.disp-inl {
+	display: inline-block;
+}
+
+form {
+	display: flex;
+}
+
+label,
+input {
+	display: block;
+}
+
+input {
+	margin-bottom: 10px;
+}
+
+textarea {
+	outline: none;
+	resize: none;
+	overflow: auto;
+	width: 100%;
+    height: 200px;
+    margin-top: 15px;
+}
+
+p {
+	font-size: 14px;
+	margin-left: 10px;
+	margin-bottom: 0;
+}
+
+#box {
+	width: 30%;
+}

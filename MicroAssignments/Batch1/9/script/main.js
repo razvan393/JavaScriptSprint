@@ -59,10 +59,13 @@ function calculateAge () {
 		if(age < 18)
 		{
 			document.body.classList.add("disney");
+			document.body.insertAdjacentHTML("beforeend","<p>Go to disney.com</p>");
+
 		}
 		else
 		{
 			document.body.classList.add("moose");
+			document.getElementById("myForm").style.display = "none";
 		}
 	}
 }

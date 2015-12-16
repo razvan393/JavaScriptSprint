@@ -15,3 +15,11 @@ select {
 	height: 860px;
 	overflow: auto;
 }
+
+p {
+	color: #fff;
+	font-size: 18px;
+	border: 1px solid #fff;
+	width: 200px;
+	text-align: center;
+}
