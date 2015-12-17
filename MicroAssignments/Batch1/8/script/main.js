@@ -5,7 +5,7 @@ function calculate () {
 	b = document.getElementById("number2").value;
 	if((isNaN(a))||(isNaN(b)))
 	{
-		document.getElementById("result").value = NaN;
+		document.getElementById("result").value = "";
 	}
 	else
 	{
@@ -13,7 +13,7 @@ function calculate () {
 		b = parseFloat(b);
 		var drop = document.getElementById("drop");
 		var operator = drop.options[drop.selectedIndex].value;
-		console.log(operator);
+		if(!(isNaN(a)) && !(isNaN(b)))
 		switch (operator) 
 		{
 			case "1":
@@ -29,7 +29,7 @@ function calculate () {
 			document.getElementById("result").value = a / b;
 			break;
 			default:
-			document.getElementById("result").value = NaN;
+			document.getElementById("result").value = "";
 		}
     }
 }
@@ -37,3 +37,11 @@ function calculate () {
 var start = document.getElementById("myForm");
 start.addEventListener("input", calculate, false);
 start.addEventListener("select", calculate, false);
+var a = document.getElementById("number1");
+a.addEventListener("click", function(){
+	a.value = "";
+},false);
+var b = document.getElementById("number2");
+b.addEventListener("click", function(){
+	b.value = "";
+},false);
