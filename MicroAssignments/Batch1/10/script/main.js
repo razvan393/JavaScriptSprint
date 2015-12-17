@@ -7,30 +7,30 @@ function verify (evt)
 	var check = document.getElementById("checkbox");
 	var mesaj = document.getElementById("msg").value;
 	var box = document.getElementById("box");
-	var output = new Array();
+	var errors = [];
 	var text = "";
 
-	if(nume.length<2)
+	if (nume.length < 2)
 	{
-		output.push("Numele trebuie sa aiba cel putin 3 caractere!");
+		errors.push("Numele trebuie sa aiba cel putin 2 caractere!");
 	}
 	if(prenume.length<2)
 	{
-		output.push("Prenumele trebuie sa aiba cel putin 3 caractere!");
+		errors.push("Prenumele trebuie sa aiba cel putin 2 caractere!");
 	}
 	if(checkEmail(email)) {
-		output.push("Introduce-ti un email corect!"); 
+		errors.push("Introduce-ti un email corect!"); 
 	}
 	if(!check.checked)
 	{
-		output.push("Trebuie sa agreati conditiile!");
+		errors.push("Trebuie sa agreati conditiile!");
 	}
 	if(mesaj === "")
 	{
-		output.push("Introduce-ti un mesaj!");
+		errors.push("Introduce-ti un mesaj!");
 	}
 
-	if(output.length === 0)
+	if(errors.length === 0)
 	{
 		text = "Thank you "+nume+" "+prenume+"!&#10084;"
 		box.innerHTML = text;
@@ -40,9 +40,9 @@ function verify (evt)
 	}
 	else
 	{
-		for(var i=0; i<output.length; i++)
+		for(var i=0; i<errors.length; i++)
 		{
-			text += "<p>"+output[i]+"</p>\n"; 
+			text += "<p>"+errors[i]+"</p>\n"; 
 		}
 		box.innerHTML = text;
 		box.classList.add("disp-inl");
@@ -52,14 +52,7 @@ function verify (evt)
 function checkEmail (mail) 
 {	
 	var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-	if (!filter.test(mail))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return !filter.test(mail);
 }
 
 
