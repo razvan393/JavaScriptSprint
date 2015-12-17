@@ -33,7 +33,7 @@ function verify (evt)
 	if(output.length === 0)
 	{
 		text = "Thank you "+nume+" "+prenume+"!&#10084;"
-		box.insertAdjacentHTML("beforeend", text);
+		box.innerHTML = text;
 		box.classList.add("disp-inl");
 		document.getElementById("hide1").style.display = "none";
 		document.getElementById("hide2").style.display = "none";
@@ -44,7 +44,7 @@ function verify (evt)
 		{
 			text += "<p>"+output[i]+"</p>\n"; 
 		}
-		box.insertAdjacentHTML("beforeend", text);
+		box.innerHTML = text;
 		box.classList.add("disp-inl");
 	}
 }

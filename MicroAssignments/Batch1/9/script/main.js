@@ -1,5 +1,10 @@
 var dk = 1, mk = 1, yk = 1;
 var age ;
+var today = new Date();
+var sd = today.getDate();
+var sm = today.getMonth()+1;
+var sy = today.getFullYear();
+
 function addDays () 
 {
     if (dk === 1)
@@ -32,7 +37,7 @@ function addYears ()
 {
     if (yk === 1)
     {
-    	for (var i=1960; i<=2010; i++)
+    	for (var i=1960; i<=sy; i++)
 		{
 		var option = document.createElement("option");
 		option.value = option.textContent = i;
@@ -48,10 +53,6 @@ function calculateAge () {
 	var y = parseInt(document.getElementById("year").value);
 	if ((!isNaN(d))&&(!isNaN(m))&&(!isNaN(y))) 
 	{
-		var today = new Date();
-		var sd = today.getDate();
-		var sm = today.getMonth()+1;
-		var sy = today.getFullYear();
 		var sDate = (sy-1) * 365 + (sm-1) * 30 + sd;
 		var uDate = (y-1) * 365 + (m-1) * 30 + d;
 		age = Math.floor((sDate - uDate)/365);
