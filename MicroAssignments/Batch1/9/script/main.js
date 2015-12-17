@@ -70,14 +70,11 @@ function calculateAge () {
 	}
 }
 
-var day = document.getElementById("day");
-day.addEventListener("click", addDays, false);
-
-var month = document.getElementById("month");
-month.addEventListener("click", addMonths, false);
-
-var year = document.getElementById("year");
-year.addEventListener("click", addYears, false);
+window.addEventListener("load", function(){
+	addDays();
+	addMonths();
+	addYears();
+}, false)
 
 var sel = document.getElementById("myForm");
 sel.addEventListener("change", calculateAge, false);
