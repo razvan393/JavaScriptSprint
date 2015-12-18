@@ -72,10 +72,10 @@ function verify (evt)
 
 	if(errors.length === 0)
 	{
-		//text = tmpl('msg-template', {nume:nume,prenume:prenume});
-		//showMessage.innerHTML = text;
-		text="Thank you "+nume+" "+prenume+"!&#10084"
-		document.getElementById("text-p").innerHTML = text;
+		text = tmpl('msg_template', {nume:nume,prenume:prenume});
+		showMessage.innerHTML = text;
+		//text="Thank you "+nume+" "+prenume+"!&#10084"
+		//document.getElementById("text-p").innerHTML = text;
 		container.classList.remove("nonMessage");
 		container.classList.add("Message");
 	}
