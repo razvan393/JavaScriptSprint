@@ -1,0 +1,26 @@
+* {
+	font-family: sans-serif;
+}
+
+input[disabled] {
+	text-decoration: line-through;
+}
+
+.hide {
+	display: none;
+}
+
+.rating > span:hover {
+	cursor: pointer;
+}
+
+html, body {
+	height: 100%;
+	margin: 10px;
+	padding: 0;
+}
+
+#map {
+	height: 70%;
+	width: 40%;
+}

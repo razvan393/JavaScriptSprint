@@ -4,10 +4,20 @@
 	<link href="css/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<div>
-		<a href="#">Add new row</a>
-	</div>
-	<table>
+
+	<script type="text/html" id="tpl">
+		<td>
+			<input placeholder="Name" />
+		</td>
+		<td>
+			<input placeholder="Email" type="email"/>
+		</td>
+		<td>
+			<a class="add-btn" href="#">Add new row</a>
+		</td>
+	</script>
+
+	<table id="the-table">
 		<thead>
 			<tr>
 				<th>
@@ -30,7 +40,7 @@
 					<input placeholder="Email" type="email"/>
 				</td>
 				<td>
-					...
+					<a class="add-btn" href="#">Add new row</a>
 				</td>
 			</tr>
 		</tbody>
