@@ -24,3 +24,22 @@ html, body {
 	height: 70%;
 	width: 40%;
 }
+
+td {
+	padding: 0!important;
+}
+
+thead {
+	background-color: #9d9d9d;
+}
+
+td,
+th{
+	border: 1px solid #000000!important;
+}
+
+#add {
+	width: 50%;
+	border-radius: 5px;
+	border: 1px solid #000000;
+}
