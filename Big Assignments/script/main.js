@@ -47,6 +47,7 @@ var isRemoveBtn = function (target) {
 var createRow = function (x) {
     var tr = document.createElement("tr");
     tr.innerHTML = tmpl("tpl", x);
+    createMarker(x.oras);
     tableBody.appendChild(tr);
 };
 
@@ -59,12 +60,12 @@ var getValues = function (form) {
     var name = inputs[0].value;
     var oras = inputs[1].value;
     var rating = parseInt(inputs[2].value,10);
-    var marker = createMarker(oras);
+    //var marker = createMarker(oras);
     return {
         name: name,
         oras: oras,
-        rating: rating,
-        position: marker
+        rating: rating
+       // position: marker
     };
 };
 
@@ -110,7 +111,6 @@ var reloadTable = function () {
     for(var i=0; i<storage.length; i++)
     {
         createRow(storage[i]);
-        reloadMarker(storage[i].position);
     }
 };
 
@@ -163,8 +163,8 @@ var createMarker  = function (address) {
                 map: map,
                 position: results[0].geometry.location
             });
-            console.log(typeof marker.position);
-            return results[0].geometry.location;
+           // console.log(marker.position.lat);
+            return marker.position;
         }
         else
         {
@@ -185,12 +185,12 @@ var centerMap = function (address) {
     });
 };
 
-var reloadMarker = function (pos) {
+/*var reloadMarker = function (pos) {
     var marker = new google.maps.Marker({
         map: map,
         position: pos
     });
-};
+};*/
 
 var sort_by = function(field, reverse, primer){
 
