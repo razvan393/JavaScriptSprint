@@ -9,6 +9,8 @@ var geocoder;
 var thName = document.getElementById("h-name");
 var thOras = document.getElementById("h-oras");
 var thRating = document.getElementById("h-rating");
+var latlong = [];
+
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -16,17 +18,6 @@ function initMap() {
         zoom: 8
     });
 }
-
-rate.addEventListener("click", function ( event ) {
-    var id = parseInt(event.target.id, 10);
-    if ((id >0 ) && (id<6))
-    {
-        numberStars(5,"&#9734");
-        document.getElementById("result").value = id;
-        var v = id.toString();
-        numberStars (v, "&#9733");
-    }
-}, false);
 
 function numberStars (a, text)
 {
@@ -46,8 +37,8 @@ var isRemoveBtn = function (target) {
 
 var createRow = function (x) {
     var tr = document.createElement("tr");
-    tr.innerHTML = tmpl("tpl", x);
-    createMarker(x.oras);
+    tr.innerHTML = tmpl("tpl", {name:x.name, oras:x.objOras.oras, rating: x.rating});
+    reloadMarker(x.objOras.lat, x.objOras.long);
     tableBody.appendChild(tr);
 };
 
@@ -55,27 +46,12 @@ var getInputs = function(form){
     return form.getElementsByTagName("input");
 }
 
-var getValues = function (form) {
-    var inputs = form.getElementsByTagName("input");
-    var name = inputs[0].value;
-    var oras = inputs[1].value;
-    var rating = parseInt(inputs[2].value,10);
-    //var marker = createMarker(oras);
-    return {
-        name: name,
-        oras: oras,
-        rating: rating
-       // position: marker
-    };
-};
-
 var isValidName = function (name) {
     return name.length > 2;
 }
 
-var isValid = function () {
-    var values = getValues(myForm);
-    if (isValidName(values.name) && isValidCity(values.oras))
+var isValid = function (name, oras) {
+    if (isValidName(name) && isValidCity(oras))
     {
         return true;
     }
@@ -126,7 +102,7 @@ var getFather = function (x) {
     return x.parentNode;
 };
 
-var getPosition = function (x, y) {
+var getPos = function (x, y) {
     var pos=0;
     for (var i=0; i< y.length; i++)
     {
@@ -153,44 +129,32 @@ var isValidCity = function (address) {
     }
 };
 
-var createMarker  = function (address) {
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode ({'address':address}, function (results, status){
-        if (status == google.maps.GeocoderStatus.OK)
-        {
-            map.setCenter(results[0].geometry.location);
-            var marker = new google.maps.Marker({
-                map: map,
-                position: results[0].geometry.location
-            });
-           // console.log(marker.position.lat);
-            return marker.position;
-        }
-        else
-        {
-            console.log("Geocode was not successful for the following reason: " + status);
-            alert("Orasul nu exista!");
-            return 0;
-        }
-    });
+var getValues = function (form) {
+    var inputs = form.getElementsByTagName("input");
+    var name = inputs[0].value;
+    var oras = inputs[1].value;
+    var rating = parseInt(inputs[2].value,10);
+    createMarker(name, oras, rating);
+
 };
 
-var centerMap = function (address) {
-    geocoder = new google.maps.Geocoder();
-    geocoder.geocode({'address':address}, function (results, status) {
-        if (status == google.maps.GeocoderStatus.OK)
-        {
-          map.setCenter(results[0].geometry.location);
-        }
-    });
+var centerMap = function (lat, long) {
+    var myLatlng = new google.maps.LatLng(lat,long);
+    var mapOptions = {
+        zoom: 4,
+        center: myLatlng
+    }
+    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
 };
 
-/*var reloadMarker = function (pos) {
+var reloadMarker = function (lat, long) {
+    var myLatlng = new google.maps.LatLng(lat,long);
     var marker = new google.maps.Marker({
-        map: map,
-        position: pos
+        position: myLatlng
     });
-};*/
+    marker.setMap(map);
+};
 
 var sort_by = function(field, reverse, primer){
 
@@ -205,17 +169,49 @@ var sort_by = function(field, reverse, primer){
     }
 }
 
+var createMarker  = function (name, address, rating) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode ({'address':address}, function (results, status){
+        if (status == google.maps.GeocoderStatus.OK)
+        {
+            map.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+                map: map,
+                position: results[0].geometry.location
+            });
+            latlong[0] = marker.position.lat();
+            latlong[1] = marker.position.lng();
+            var objOras = {
+                oras:address,
+                lat: latlong[0],
+                long: latlong[1]
+            };
+            if (isValid(name, objOras.oras))
+            {
+                var obiect = {
+                    name: name,
+                    objOras: objOras,
+                    rating: rating
+                };
+                storage.push(obiect);
+                recalculateTotal();
+                reloadTable();
+                clearInputs();
+            }
+        }
+        else
+        {
+            console.log("Geocode was not successful for the following reason: " + status);
+            alert("Orasul nu exista!");
+        }
+    });
+};
+
 addBtn.addEventListener("click", function () {
     if (isAddBtn(event.target))
     {
         event.preventDefault();
-        if(isValid())
-        {
-            storage.push(getValues(myForm));
-            recalculateTotal();
-            clearInputs();
-        }
-        reloadTable();
+        getValues(myForm);
     }
 });
 
@@ -225,7 +221,7 @@ tableBody.addEventListener("click", function () {
         event.preventDefault();
         var grandpa = getFather(getFather(event.target));
         var grandpaSiblings = grandpa.parentNode.children;
-        var grandpaPos = getPosition(grandpa, grandpaSiblings);
+        var grandpaPos = getPos(grandpa, grandpaSiblings);
         removeLineStorage(grandpaPos);
         initMap();
         recalculateTotal();
@@ -235,8 +231,8 @@ tableBody.addEventListener("click", function () {
     {
         var father = getFather(getFather(event.target));
         var fatherSiblings = father.parentNode.children;
-        var fatherPos = getPosition(father, fatherSiblings);
-        centerMap(storage[fatherPos].oras);
+        var fatherPos = getPos(father, fatherSiblings);
+        centerMap(storage[fatherPos].objOras.lat, storage[fatherPos].objOras.long);
     }
 });
 
@@ -254,3 +250,14 @@ thRating.addEventListener("click", function () {
     storage.sort(sort_by("rating", false, parseInt));
     reloadTable();
 });
+
+rate.addEventListener("click", function ( event ) {
+    var id = parseInt(event.target.id, 10);
+    if ((id >0 ) && (id<6))
+    {
+        numberStars(5,"&#9734");
+        document.getElementById("result").value = id;
+        var v = id.toString();
+        numberStars (v, "&#9733");
+    }
+}, false);
