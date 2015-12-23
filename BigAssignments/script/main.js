@@ -312,7 +312,7 @@ tableBody.addEventListener("click", function () {
         removeLineStorage(grandpaPos);
         initMap();
         reloadTable(storage);
-        centerMap(storage[0].position.lat, storage[0].position.long);
+        centerMap(storage[storage.length-1].position.lat, storage[storage.length-1].position.long);
     }
     else if (isEditBtn(event.target))
     {
