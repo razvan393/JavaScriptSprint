@@ -43,3 +43,9 @@ th{
 	border-radius: 5px;
 	border: 1px solid #000000;
 }
+
+.container {
+	width: 90%;
+	margin: auto;
+}
+
