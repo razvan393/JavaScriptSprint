@@ -192,6 +192,7 @@ var createMarker  = function (name, address, rating, weekend) {
                 };
                 storage.push(obiect);
                 reloadTable(getFilteredStorage(storage));
+                centerMap(storage[storage.length-1].position.lat, storage[storage.length-1].position.long);
                 clearInputs();
 
         }
@@ -272,7 +273,7 @@ var getFilteredStorage = function (store) {
     }
     clearMarkers();
     if (filteredStorage.length > 0) {
-        centerMap(filteredStorage[0].position.lat, filteredStorage[0].position.long);
+        centerMap(filteredStorage[filteredStorage.length-1].position.lat, filteredStorage[filteredStorage.length-1].position.long);
     }
     return filteredStorage;
 };
