@@ -14,7 +14,8 @@ var thRating = document.getElementById("h-rating");
 var latlong = [];
 var filtruOk, filtruNume, filtruOras;
 var starNumber = 0;
-
+var globalMarkers = [];
+var id = 0;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -104,6 +105,7 @@ var clearInputs = function () {
     document.getElementById("oras").value = "";
     document.getElementById("result").value = "0";
     numberStars(5,"&#9734");
+    starNumber = 0;
     document.getElementById("checkbox").checked = false;
 };
 
@@ -172,6 +174,7 @@ var createMarker  = function (name, address, rating, weekend) {
                 map: map,
                 position: results[0].geometry.location
             });
+            globalMarkers.push(marker);
             latlong[0] = marker.position.lat();
             latlong[1] = marker.position.lng();
             var position = {
@@ -180,6 +183,7 @@ var createMarker  = function (name, address, rating, weekend) {
             };
 
                 var obiect = {
+                    id: getId(),
                     name: name,
                     oras: address,
                     rating: rating,
@@ -187,7 +191,7 @@ var createMarker  = function (name, address, rating, weekend) {
                     weekend: weekend
                 };
                 storage.push(obiect);
-                reloadTable(storage);
+                reloadTable(getFilteredStorage(storage));
                 clearInputs();
 
         }
@@ -256,9 +260,39 @@ var isDefined = function (filtru) {
 };
 
 var getFilteredStorage = function (store) {
-    return getFilteredByWk(getFilteredByCity(getFilteredByName(store)))
+    var filteredStorage = getFilteredByWk(getFilteredByCity(getFilteredByName(store)));
+    globalMarkers = [];
+    for (var i = 0 ; i <filteredStorage.length; i++)
+    {
+        var myLatlng = new google.maps.LatLng(filteredStorage[i].position.lat,filteredStorage[i].position.long);
+        var marker = new google.maps.Marker({
+            position: myLatlng
+        });
+        globalMarkers.push(marker);
+    }
+    clearMarkers();
+    if (filteredStorage.length > 0) {
+        centerMap(filteredStorage[0].position.lat, filteredStorage[0].position.long);
+    }
+    return filteredStorage;
 };
 
+var clearMarkers = function () {
+
+    initMap();
+    for (var i = 0; i < globalMarkers.length; i++ )
+    {
+        reloadMarker(globalMarkers[i].position.lat(),globalMarkers[i].position.lng());
+    }
+};
+
+var getId = function () {
+    return id++;
+};
+
+var isEditBtn = function (target) {
+    return target.classList.contains("edit");
+};
 
 addBtn.addEventListener("click", function () {
     if (isAddBtn(event.target))
@@ -280,6 +314,11 @@ tableBody.addEventListener("click", function () {
         reloadTable(storage);
         centerMap(storage[0].position.lat, storage[0].position.long);
     }
+    else if (isEditBtn(event.target))
+    {
+        event.preventDefault();
+        console.log("ceva");
+    }
     else
     {
         var father = getFather(getFather(event.target));
@@ -288,11 +327,11 @@ tableBody.addEventListener("click", function () {
         centerMap(storage[fatherPos].position.lat, storage[fatherPos].position.long);
     }
 });
-
 thName.addEventListener("click", function () {
     storage.sort(sort_by("name", false, function(a){return a.toUpperCase()}));
     reloadTable(storage);
 });
+
 thName.addEventListener("dblclick", function () {
     storage.sort(sort_by("name", false, function(a){return a.toUpperCase()}));
     storage.reverse();
