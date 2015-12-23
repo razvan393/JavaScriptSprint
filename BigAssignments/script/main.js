@@ -16,6 +16,12 @@ var filtruOk, filtruNume, filtruOras;
 var starNumber = 0;
 var globalMarkers = [];
 var id = 0;
+var rowId = document.getElementById("rowId");
+var checkboxWeekend = document.getElementById("checkbox");
+var starRating = document.getElementById("result");
+var j = 0;
+var mark;
+
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -42,7 +48,7 @@ var isRemoveBtn = function (target) {
 
 var createRow = function (x) {
     var tr = document.createElement("tr");
-    tr.innerHTML = tmpl("tpl", {name:x.name, oras:x.oras, rating: x.rating});
+    tr.innerHTML = tmpl("tpl", {name:x.name, oras:x.oras, rating: x.rating, id: x.id});
     reloadMarker(x.position.lat, x.position.long);
     tableBody.appendChild(tr);
 };
@@ -131,7 +137,6 @@ var removeLineStorage = function (x) {
 
 var checkBox = function (chk) {
     return(chk.checked)
-
 };
 
 var getValues = function (form) {
@@ -139,10 +144,59 @@ var getValues = function (form) {
     var name = inputs[0].value;
     var oras = inputs[1].value;
     var rating = parseInt(inputs[2].value,10);
-    var weekend = checkBox(inputs[3]);
+    var weekend = checkBox(inputs[4]);
+    var currentId = rowId.value;
     if (isValid(name, oras, rating))
     {
-    createMarker(name, oras, rating, weekend);
+        if(currentId == '')
+        {
+            createMarker(name, oras, rating, weekend);
+        }
+        else
+        {
+                    var geocoder = new google.maps.Geocoder();
+
+                    geocoder.geocode ({'address':oras}, function (results, status){
+                        if (status == google.maps.GeocoderStatus.OK)
+                        {
+                            map.setCenter(results[0].geometry.location);
+                            mark = new google.maps.Marker({
+                                map: map,
+                                position: results[0].geometry.location
+                            });
+                            for (j = 0; j < storage.length; j++)
+                            {
+                                if(storage[j].id == currentId)
+                                {
+                                    storage[j].name = name;
+                                    storage[j].oras = oras;
+                                    storage[j].rating = rating;
+                                    storage[j].weekend = weekend;
+                                    storage[j].position.lat = mark.position.lat();
+                                    storage[j].position.long = mark.position.lng();
+                                }
+                            }
+                        }
+                        reloadTable(getFilteredStorage(storage));
+                        clearInputs();
+
+                    });
+
+            globalMarkers = [];
+            for (var i = 0 ; i <storage.length; i++)
+            {
+                var myLatlng = new google.maps.LatLng(storage[i].position.lat,storage[i].position.long);
+                var marker = new google.maps.Marker({
+                    position: myLatlng
+                });
+                globalMarkers.push(marker);
+            }
+            clearMarkers();
+            if (storage.length > 0) {
+                centerMap(storage[storage.length-1].position.lat, storage[storage.length-1].position.long);
+            }
+            rowId.value = "";
+        }
     }
     else
     {
@@ -303,6 +357,41 @@ addBtn.addEventListener("click", function () {
     }
 });
 
+var editRow = function (target) {
+    var id = getIdOfButton(target);
+    var data = getDataFromStore (storage, id);
+    populateForm(data);
+};
+
+var getDataFromStore = function (storage, id) {
+    for (var i = 0; i< storage.length; i++)
+    {
+        if(storage[i].id == id)
+        {
+            return storage[i];
+        }
+    }
+};
+
+var getIdOfButton = function (target) {
+    return parseInt(target.getAttribute('data-id'));
+};
+
+var populateForm = function (data) {
+    var nume = myForm.children[1];
+    var oras = myForm.children[3];
+    nume.value = data.name;
+    oras.value = data.oras;
+    numberStars (5, "&#9734");
+    numberStars (data.rating, "&#9733");
+    rowId.value = data.id;
+    starRating.value = data.rating;
+    if (data.weekend)
+    {
+        checkboxWeekend.checked = true;
+    }
+};
+
 tableBody.addEventListener("click", function () {
     if (isRemoveBtn(event.target))
     {
@@ -318,7 +407,7 @@ tableBody.addEventListener("click", function () {
     else if (isEditBtn(event.target))
     {
         event.preventDefault();
-        console.log("ceva");
+        editRow(event.target);
     }
     else
     {
