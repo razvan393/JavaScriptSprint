@@ -440,7 +440,7 @@ var getIdOfButton = function (target) {
 
 var populateForm = function (data) {
     var nume = myForm.children[1];
-    var oras = myForm.children[3];
+    var oras = myForm.children[4];
     nume.value = data.name;
     oras.value = data.oras;
     numberStars (5, "&#9734");
