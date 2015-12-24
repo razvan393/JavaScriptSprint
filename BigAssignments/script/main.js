@@ -21,6 +21,7 @@ var checkboxWeekend = document.getElementById("checkbox");
 var starRating = document.getElementById("result");
 var j = 0;
 var mark;
+var alphaExp = /^[a-zA-Z]+$/;
 
 
 function initMap() {
@@ -61,12 +62,16 @@ var isValidLength = function (name) {
     return name.length > 2;
 };
 
+var isValidName = function (name) {
+    return name.match(alphaExp);
+};
+
 var isValidRating = function (rating) {
     return (rating > 0);
 };
 
 var isValid = function (name, oras, rating) {
-    if (isValidLength(name) && isValidLength(oras) && isValidRating(rating))
+    if (isValidLength(name) && isValidName(name) && isValidLength(oras) && isValidRating(rating))
     {
         return true;
     }
@@ -419,35 +424,35 @@ tableBody.addEventListener("click", function () {
 });
 thName.addEventListener("click", function () {
     storage.sort(sort_by("name", false, function(a){return a.toUpperCase()}));
-    reloadTable(storage);
+    reloadTable(getFilteredStorage(storage));
 });
 
 thName.addEventListener("dblclick", function () {
     storage.sort(sort_by("name", false, function(a){return a.toUpperCase()}));
     storage.reverse();
-    reloadTable(storage);
+    reloadTable(getFilteredStorage(storage));
 });
 
 thOras.addEventListener("click", function () {
     storage.sort(sort_by("oras", false, function(a){return a.toUpperCase()}));
-    reloadTable(storage);
+    reloadTable(getFilteredStorage(storage));
 });
 
 thOras.addEventListener("dblclick", function () {
     storage.sort(sort_by("oras", false, function(a){return a.toUpperCase()}));
     storage.reverse();
-    reloadTable(storage);
+    reloadTable(getFilteredStorage(storage));
 });
 
 thRating.addEventListener("click", function () {
     storage.sort(sort_by("rating", false, parseInt));
-    reloadTable(storage);
+    reloadTable(getFilteredStorage(storage));
 });
 
 thRating.addEventListener("dblclick", function () {
     storage.sort(sort_by("rating", false, parseInt));
     storage.reverse();
-    reloadTable(storage);
+    reloadTable(getFilteredStorage(storage));
 });
 
 rate.addEventListener("click", function ( event ) {
