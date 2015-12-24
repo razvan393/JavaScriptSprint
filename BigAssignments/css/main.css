@@ -49,3 +49,10 @@ th{
 	margin: auto;
 }
 
+table p {
+	color: #0f0f0f;
+}
+
+p {
+	color: #ff0000;
+}

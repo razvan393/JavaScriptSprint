@@ -22,6 +22,9 @@ var starRating = document.getElementById("result");
 var j = 0;
 var mark;
 var alphaExp = /^[a-zA-Z]+$/;
+var eroareName;
+var eroareOras;
+var eroareRating;
 
 
 function initMap() {
@@ -70,8 +73,25 @@ var isValidRating = function (rating) {
     return (rating > 0);
 };
 
+var checkForErrors = function (name, oras, rating) {
+    if (!name.match(alphaExp))
+    {
+        eroareName = "Introduce-ti un nume valid!"
+    }
+    if (oras.length < 2)
+    {
+        eroareOras = "Intruduce-ti un oras!";
+    }
+    if (rating == 0)
+    {
+        eroareRating = "Introduce-ti rating!";
+    }
+};
+
 var isValid = function (name, oras, rating) {
-    if (isValidLength(name) && isValidName(name) && isValidLength(oras) && isValidRating(rating))
+    eroareName = eroareOras = eroareRating = "";
+    checkForErrors(name, oras, rating);
+    if( isValidName(name) && isValidLength(oras) && isValidRating(rating))
     {
         return true;
     }
@@ -118,6 +138,21 @@ var clearInputs = function () {
     numberStars(5,"&#9734");
     starNumber = 0;
     document.getElementById("checkbox").checked = false;
+    document.getElementById("eroare-nume").innerHTML = "";
+    document.getElementById("eroare-nume").classList.add("hide");
+    document.getElementById("eroare-oras").innerHTML = "";
+    document.getElementById("eroare-oras").classList.add("hide");
+    document.getElementById("eroare-rating").innerHTML = "";
+    document.getElementById("eroare-rating").classList.add("hide");
+};
+
+var clearErrors = function () {
+    document.getElementById("eroare-nume").innerHTML = "";
+    document.getElementById("eroare-nume").classList.add("hide");
+    document.getElementById("eroare-oras").innerHTML = "";
+    document.getElementById("eroare-oras").classList.add("hide");
+    document.getElementById("eroare-rating").innerHTML = "";
+    document.getElementById("eroare-rating").classList.add("hide");
 };
 
 var getFather = function (x) {
@@ -205,7 +240,21 @@ var getValues = function (form) {
     }
     else
     {
-        alert("Date introduse gresit");
+        if (eroareName != "")
+        {
+            document.getElementById("eroare-nume").innerHTML = eroareName;
+            document.getElementById("eroare-nume").classList.remove("hide");
+        }
+        if (eroareOras != "")
+        {
+            document.getElementById("eroare-oras").innerHTML = eroareOras;
+            document.getElementById("eroare-oras").classList.remove("hide");
+        }
+        if (eroareRating != "")
+        {
+            document.getElementById("eroare-rating").innerHTML = eroareRating;
+            document.getElementById("eroare-rating").classList.remove("hide");
+        }
     }
 
 };
@@ -257,8 +306,22 @@ var createMarker  = function (name, address, rating, weekend) {
         }
         else
         {
-            console.log("Geocode was not successful for the following reason: " + status);
-            alert("Orasul nu exista!");
+            eroareOras = "Nu exista acest oras!";
+            if (eroareName != "")
+            {
+                document.getElementById("eroare-nume").innerHTML = eroareName;
+                document.getElementById("eroare-nume").classList.remove("hide");
+            }
+            if (eroareOras != "")
+            {
+                document.getElementById("eroare-oras").innerHTML = eroareOras;
+                document.getElementById("eroare-oras").classList.remove("hide");
+            }
+            if (eroareRating != "")
+            {
+                document.getElementById("eroare-rating").innerHTML = eroareRating;
+                document.getElementById("eroare-rating").classList.remove("hide");
+            }
         }
     });
 };
@@ -354,13 +417,6 @@ var isEditBtn = function (target) {
     return target.classList.contains("edit");
 };
 
-addBtn.addEventListener("click", function () {
-    if (isAddBtn(event.target))
-    {
-        event.preventDefault();
-        getValues(myForm);
-    }
-});
 
 var editRow = function (target) {
     var id = getIdOfButton(target);
@@ -420,6 +476,15 @@ tableBody.addEventListener("click", function () {
         var fatherSiblings = father.parentNode.children;
         var fatherPos = getPos(father, fatherSiblings);
         centerMap(storage[fatherPos].position.lat, storage[fatherPos].position.long);
+    }
+});
+
+addBtn.addEventListener("click", function () {
+    if (isAddBtn(event.target))
+    {
+        event.preventDefault();
+        clearErrors();
+        getValues(myForm);
     }
 });
 thName.addEventListener("click", function () {
