@@ -10,7 +10,8 @@ input[disabled] {
 	display: none;
 }
 
-.rating > span:hover {
+.rating > span:hover,
+tbody td{
 	cursor: pointer;
 }
 
@@ -55,4 +56,13 @@ table p {
 
 p {
 	color: #ff0000;
+}
+
+.topological-info {
+	width:50%;
+	float: right;
+}
+
+.topological-info p{
+	color: #0f0f0f;
 }

@@ -25,6 +25,7 @@ var alphaExp = /^[a-zA-Z]+$/;
 var eroareName;
 var eroareOras;
 var eroareRating;
+var distancePoints = 0;
 
 
 function initMap() {
@@ -129,6 +130,7 @@ var reloadTable = function (store) {
         createRow(store[i]);
     }
     recalculateTotal(store);
+    calculateDistanceBetweenPoints(store);
 };
 
 var clearInputs = function () {
@@ -285,9 +287,11 @@ var createMarker  = function (name, address, rating, weekend) {
             globalMarkers.push(marker);
             latlong[0] = marker.position.lat();
             latlong[1] = marker.position.lng();
+            latlong[2] = new google.maps.LatLng(latlong[0], latlong[1]);
             var position = {
                 lat: latlong[0],
-                long: latlong[1]
+                long: latlong[1],
+                latlong: latlong[2]
             };
 
                 var obiect = {
@@ -327,7 +331,7 @@ var createMarker  = function (name, address, rating, weekend) {
 };
 
 var startsWith = function (sir, prefix) {
-    return sir.indexOf(prefix) === 0;
+    return sir.toLowerCase().indexOf(prefix.toLowerCase()) === 0;
 };
 
 var sort_by = function(field, reverse, primer){
@@ -453,6 +457,22 @@ var populateForm = function (data) {
     }
 };
 
+var calculateDistanceBetweenPoints = function (store) {
+    distancePoints = 0;
+    if (store.length > 1)
+    {
+        for (var i = 0; i< store.length-1; i++)
+        {
+            var from = store[i].position.latlong;
+            var to = store[i+1].position.latlong;
+            var distance = google.maps.geometry.spherical.computeDistanceBetween(from, to);
+            distancePoints += Math.round(distance/1000);
+        }
+    }
+    var sir = "Distanta intre puncte: "+distancePoints+" km";
+    document.getElementById("distance-points").innerHTML = sir;
+}
+
 tableBody.addEventListener("click", function () {
     if (isRemoveBtn(event.target))
     {
@@ -463,7 +483,10 @@ tableBody.addEventListener("click", function () {
         removeLineStorage(grandpaPos);
         initMap();
         reloadTable(storage);
-        centerMap(storage[storage.length-1].position.lat, storage[storage.length-1].position.long);
+        if (storage.length > 0)
+        {
+            centerMap(storage[storage.length - 1].position.lat, storage[storage.length - 1].position.long);
+        }
     }
     else if (isEditBtn(event.target))
     {

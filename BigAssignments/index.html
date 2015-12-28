@@ -3,7 +3,7 @@
 	<title>Batch 2 - Assignment 1</title>
 	<meta charset="utf-8">
 	<link href="css/main.css" rel="stylesheet" type="text/css">
-	<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -97,10 +97,14 @@
 		</table>
 	</div>
 	<div id="map">
-
+	</div>
+	<div class="topological-info">
+		<p id="distance-points"></p>
+		<p id="perimeter"></p>
+		<p id="area"></p>
 	</div>
 	<script type="text/javascript" src="script/template-engine.js"></script>
 	<script type="text/javascript" src="script/main.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtzouKawe50QoaJl-ylbfKaee4nNbZIdE&callback=initMap&libraries=places">	</script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtzouKawe50QoaJl-ylbfKaee4nNbZIdE&callback=initMap&libraries=geometry,places">	</script>
 </body>
 </html>
