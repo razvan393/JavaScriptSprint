@@ -461,12 +461,14 @@ var calculateDistanceBetweenPoints = function (store) {
     distancePoints = 0;
     if (store.length > 1)
     {
-        for (var i = 0; i< store.length-1; i++)
+        for (var i = 0; i<= store.length-2; i++)
         {
-            var from = store[i].position.latlong;
-            var to = store[i+1].position.latlong;
-            var distance = google.maps.geometry.spherical.computeDistanceBetween(from, to);
-            distancePoints += Math.round(distance/1000);
+            for (var j=i+1; j<= store.length-1; j++) {
+                var from = store[i].position.latlong;
+                var to = store[j].position.latlong;
+                var distance = google.maps.geometry.spherical.computeDistanceBetween(from, to);
+                distancePoints += Math.round(distance / 1000);
+            }
         }
     }
     var sir = "Distanta intre puncte: "+distancePoints+" km";
