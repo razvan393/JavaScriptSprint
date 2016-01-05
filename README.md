@@ -1,2 +1,0 @@
-# JavaScriptSprint
-Proiecte JavaScript
