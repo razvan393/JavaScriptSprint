@@ -1,0 +1,68 @@
+* {
+	font-family: sans-serif;
+}
+
+input[disabled] {
+	text-decoration: line-through;
+}
+
+.hide {
+	display: none;
+}
+
+.rating > span:hover,
+tbody td{
+	cursor: pointer;
+}
+
+html, body {
+	height: 100%;
+	margin: 10px;
+	padding: 0;
+}
+
+#map {
+	height: 70%;
+	width: 40%;
+}
+
+td {
+	padding: 0!important;
+}
+
+thead {
+	background-color: #9d9d9d;
+}
+
+td,
+th{
+	border: 1px solid #000000!important;
+}
+
+#add {
+	width: 50%;
+	border-radius: 5px;
+	border: 1px solid #000000;
+}
+
+.container {
+	width: 90%;
+	margin: auto;
+}
+
+table p {
+	color: #0f0f0f;
+}
+
+p {
+	color: #ff0000;
+}
+
+.topological-info {
+	width:50%;
+	float: right;
+}
+
+.topological-info p{
+	color: #0f0f0f;
+}
