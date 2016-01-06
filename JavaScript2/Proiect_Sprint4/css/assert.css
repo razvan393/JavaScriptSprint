@@ -1,0 +1,49 @@
+h1 {
+	color: red;
+	text-decoration: underline;
+}
+.movies li {
+	display: inline-block;
+	background-color: #333;
+	color: #fff;
+	padding: 10px;
+	margin-right: 10px;
+}
+
+* {
+	font-family: Arial, sans-serif;
+}
+
+.movies {
+	list-style: none;
+	padding: 0;
+}
+
+.assertions {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	border-top: 1px solid #000;
+	background-color: #fff;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	min-height: 100px;
+	max-height: 300px;
+	overflow: auto;
+}
+
+.assertions li {
+	padding: 10px 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.assertions .error {
+	color: red;
+	font-weight: bold;
+}
+
+.assertions .success {
+	color: green;
+}

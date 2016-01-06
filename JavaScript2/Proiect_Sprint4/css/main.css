@@ -1,0 +1,53 @@
+* {
+	font-family: sans-serif;
+}
+
+input[disabled] {
+	text-decoration: line-through;
+}
+
+.rating > span:hover,
+tbody td{
+	cursor: pointer;
+}
+
+html, body {
+	height: 100%;
+	margin: 10px;
+	padding: 0;
+}
+
+td {
+	padding: 0!important;
+}
+
+thead {
+	background-color: #9d9d9d;
+}
+
+td,
+th{
+	border: 1px solid #000000!important;
+}
+
+.container {
+	width: 100%;
+}
+
+table p {
+	color: #0f0f0f;
+}
+
+.form{
+	width: 40%;
+}
+.store{
+	width:60%;
+	float: right;
+}
+
+.container,
+.form,
+.store{
+	display: inline-block;
+}
