@@ -3,6 +3,7 @@ $(document).ready(function () {
     $("#stars").on("click", function (event) {
         numberStars(5, "☆");
         var starId = +event.target.id;
+        console.log(event.target.id);
         if(!isNaN(starId)) {
             $("#result").text(starId);
         }
@@ -11,11 +12,35 @@ $(document).ready(function () {
         }
         numberStars(starId, '★');
     });
-    
-    $("#myForm").submit(function (event) {
-        event.preventDefault();
+
+    $('#myForm').submit(function() {
         console.log($(this).serialize());
-        clearInputs();
+        return false;
+    });
+
+    $(".remove").on("click", function () {
+        var id = $(this).data("id");
+        store.delete(id);
+        reloadStore();
+    });
+
+    $(".edit").on("click", function () {
+        var id = $(this).data("id");
+        var localData = store.getAll();
+        $.each(localData, function (index, element) {
+            console.log(localData);
+            if(element.id == id)
+            {
+                $("#city").text(element.name);
+                $("#checkEdit").text(1);
+                numberStars(element.stars, '★' );
+                $("#result").text(element.stars);
+                if(element.visited == "yes") {
+                    $("#checkbox").attr('checked', true);
+                }
+                console.log(element.visited);
+            }
+        });
     });
 });
 
