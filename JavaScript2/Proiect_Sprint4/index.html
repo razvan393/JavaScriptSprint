@@ -1,81 +1,82 @@
 <!DOCTYPE html>
 <head>
-	<title>Batch 2 - Assignment 1</title>
-	<meta charset="utf-8">
-	<link href="css/main.css" rel="stylesheet" type="text/css">
-	<link href="css/assert.css" rel="stylesheet" type="text/css">
-	<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+    <title>Batch 2 - Assignment 1</title>
+    <meta charset="utf-8">
+    <link href="css/main.css" rel="stylesheet" type="text/css">
+    <link href="css/assert.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<div class="container">
+    <div class="form">
+        <form id="myForm" action="">
+            <label for="city">
+                City
+            </label>
+            <br/>
+            <input name="city" id="city" type="text"/><br/>
+            <label for="result">Stars:</label><br/>
+            <div id="stars" class="rating">
+                <span id="1">&#9734; </span>
+                <span id="2">&#9734; </span>
+                <span id="3">&#9734; </span>
+                <span id="4">&#9734; </span>
+                <span id="5">&#9734; </span>
+            </div>
+            <input name="stars" type="hidden" id="result"/>
+            <input type="hidden" id="checkEdit"/>
+            <input name="checkbox" id="checkbox" type="checkbox"/>
+            <label for="checkbox">Visited</label><br/>
+            <input id="save" class="btn" type="submit" value="Save"/>
+            <input id="cancel" class="btn" type="hidden" value="Cancel"/>
+        </form>
+    </div>
+    <div class="store">
+        <table id="the-table" class="table table-striped table-bordered table-responsive">
+            <thead>
+            <tr>
+                <th id="h-city">
+                    <h4>City</h4>
+                </th>
+                <th id="h-stars">
+                    <h4>Stars</h4>
+                </th>
+                <th id="h-visited">
+                    <h4>Visited</h4>
+                </th>
+                <th id="h-actions">
+                    <h4>Actions</h4>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
 <script type="text/html" id="tpl">
-	<tr>
-		<td>
-			<p><%=city%></p>
-		</td>
-		<td>
-			<p><%=stars%></p>
-		</td>
-		<td>
-			<p><%=visited%></p>
-		</td>
-		<td>
-			<a class="edit" href="#" data-id="<%=id%>">Edit</a>
-			<a class="remove" href="#" data-id="<%=id%>">Remove</a>
-		</td>
-	</tr>
+    <tr data-id="<%=id%>">
+        <td>
+            <p><%=city%></p>
+        </td>
+        <td>
+            <p><%=stars%></p>
+        </td>
+        <td>
+            <input class="table-checked" disabled<%=visited ? ' checked' : ''%> type="checkbox" />
+        </td>
+        <td id="buttons">
+            <a class="edit btn" href="#">Edit</a>
+            <a class="remove btn" href="#">Remove</a>
+        </td>
+    </tr>
 </script>
-	<div class="container">
-		<div class="form">
-			<form id="myForm" action="">
-				<label for="city">
-					City
-				</label>
-				<br />
-				<input id="city" type="text" /><br />
-				<label for="result">Stars:</label><br />
-				<div id="stars" class="rating">
-					<span id="1">&#9734; </span>
-					<span id="2">&#9734; </span>
-					<span id="3">&#9734; </span>
-					<span id="4">&#9734; </span>
-					<span id="5">&#9734; </span>
-				</div>
-				<input type="hidden" id="result" value="0"/>
-				<input type="hidden" id="checkEdit" value="0"/>
-				<input  id="checkbox" type="checkbox" />
-				<label  for="checkbox">Visited</label><br />
-				<input id="save" type="submit" value="Save" />
-			</form>
-		</div>
-		<div class="store">
-			<table id="the-table" class="table table-striped table-bordered table-responsive">
-				<thead>
-				<tr>
-					<th id="h-city">
-						<h4>City</h4>
-					</th>
-					<th id="h-stars">
-						<h4>Stars</h4>
-					</th>
-					<th id="h-visited">
-						<h4>Visited</h4>
-					</th>
-					<th id="h-actions">
-						<h4>Actions</h4>
-					</th>
-				</tr>
-				</thead>
-				<tbody>
-
-				</tbody>
-			</table>
-		</div>
-	</div>
-
-	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="script/main.js"></script>
-	<script type="text/javascript" src="script/assert.js"></script>
-	<script type="text/javascript" src="script/template-engine.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="script/main.js"></script>
+<script type="text/javascript" src="script/assert.js"></script>
+<script type="text/javascript" src="script/template-engine.js"></script>
+<script type="text/javascript" src="script/store.js"></script>
 </body>
 </html>

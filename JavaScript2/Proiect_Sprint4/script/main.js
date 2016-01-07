@@ -1,123 +1,93 @@
 $(document).ready(function () {
-    reloadStore();
-    $("#stars").on("click", function (event) {
-        numberStars(5, "☆");
-        var starId = +event.target.id;
-        console.log(event.target.id);
-        if(!isNaN(starId)) {
-            $("#result").text(starId);
-        }
-        else {
-            $("#result").text(0);
-        }
-        numberStars(starId, '★');
-    });
-
-    $('#myForm').submit(function() {
-        console.log($(this).serialize());
+    drawTable();
+    $('#myForm').submit(function () {
+        onSubmit();
         return false;
     });
-
-    $(".remove").on("click", function () {
-        var id = $(this).data("id");
-        store.delete(id);
-        reloadStore();
-    });
-
-    $(".edit").on("click", function () {
-        var id = $(this).data("id");
-        var localData = store.getAll();
-        $.each(localData, function (index, element) {
-            console.log(localData);
-            if(element.id == id)
-            {
-                $("#city").text(element.name);
-                $("#checkEdit").text(1);
-                numberStars(element.stars, '★' );
-                $("#result").text(element.stars);
-                if(element.visited == "yes") {
-                    $("#checkbox").attr('checked', true);
-                }
-                console.log(element.visited);
-            }
-        });
+    $("#cancel").click(function () {
+        clearInputs();
+        $("#checkEdit").val(0);
+        $("#cancel").attr("type", "hidden");
     });
 });
 
-var store = (function() {
-    // private
-    var data = [
-        {
-            id: 1,
-            name: 'Bucharest',
-            stars: 3,
-            visited: 'yes'
-        },
-        {
-            id: 2,
-            name: 'Amsterdam',
-            stars: 4,
-            visited: 'no'
-        },
-        {
-            id: 3,
-            name: 'Paris',
-            stars: 5,
-            visited: 'yes'
-        },
-    ];
+var i = 4;
 
-    //public
-    return {
-        getAll: function() {
-            return data;
-        },
-        add: function(item) {
-            return new Promise(function(resolve, reject) {
-                data.push(item);
-                resolve(data);
-            });
-        },
-        update: function(id, updateData) {
-            return new Promise(function(resolve, reject) {
-                $.each(data, function(index) {
-                    if (this.id == id) {
-                        data[index] = updateData;
-                        resolve(data);
-                    }
-                });
-            });
-        },
-        delete: function(id) {
-            return new Promise(function(resolve, reject) {
-                $.each(data, function(index) {
-                    if (this.id == id) {
-                        data.splice(index, 1);
-                        resolve(data);
-                    }
-                });
-            });
-        }
-    };
-})();
-
-var reloadStore = function () {
-    $("#the-table tbody").html('');
-    var localData = store.getAll();
-    $.each(localData, function (index, element) {
-        $("#the-table tbody").append(tmpl("tpl", {city:element.name, stars:element.stars, visited:element.visited, id: element.id}));
-    });
-}
-
-var numberStars = function (number, text) {
-    for(var i=1; i<=number; i++) {
-        $("#" + i + "").text(text);
+var onSubmit = function () {
+    var data = getFormData();
+    var checkEdit = $("#checkEdit").val();
+    $("#cancel").attr("type", "hidden");
+    if (checkEdit > 0) {
+        store.update(checkEdit, data);
+        drawTable();
     }
-}
+    else {
+        store.add(data);
+        drawTable();
+    }
+};
+
+var getFormData = function () {
+    var city = $("[name=city]").val();
+    var visited = $("[name=checkbox]").is(":checked");
+    var dataObj = {
+        id: i++,
+        name: city,
+        stars: 3,
+        visited: visited
+    };
+    clearInputs();
+    return dataObj;
+};
+
+var drawTable = function () {
+    $("#the-table tbody").html('');
+    store.getAll().then(function (data) {
+        populate(data);
+    });
+
+    var populate = function (data) {
+        $.each(data, function (index, element) {
+            $("#the-table tbody").append(tmpl("tpl", {
+                city: element.name,
+                stars: element.stars,
+                visited: element.visited,
+                id: element.id
+            }));
+        });
+        attachEvents(data);
+    };
+};
+
+var attachEvents = function (data) {
+    $(".remove").on("click", function () {
+        var id = $(this).closest("tr").data("id");
+        console.log(id);
+        store.delete(id);
+        clearInputs();
+        drawTable();
+    });
+
+    $(".edit").on("click", function () {
+        var id = $(this).closest("tr").data("id");
+        $("#checkEdit").val(id);
+        $("#cancel").attr("type", "button");
+        $.each(data, function (index, element) {
+            if (element.id == id) {
+                $("#city").val(element.name);
+                if (element.visited == 1) {
+                    $("#checkbox").prop('checked', true);
+                }
+                else {
+                    $("#checkbox").prop('checked', false);
+                }
+            }
+        });
+    });
+};
 
 var clearInputs = function () {
-    $("#city").text('');
-    numberStars(5, "☆");
+    $("#city").val('');
     $("#checkbox").attr('checked', false);
-    $("#result").text(0);
-}
+    $("#result").val(0);
+};
