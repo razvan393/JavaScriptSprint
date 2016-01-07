@@ -43,7 +43,13 @@ var getFormData = function () {
 var drawTable = function () {
     $("#the-table tbody").html('');
     store.getAll().then(function (data) {
-        populate(data);
+        if (data.length > 0) {
+            $("tfoot").attr("class","hide");
+            populate(data);
+        }
+        else {
+            $("tfoot").attr("class","");
+        }
     });
 
     var populate = function (data) {

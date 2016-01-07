@@ -25,9 +25,12 @@ thead {
     background-color: #9d9d9d;
 }
 
-td,
-th {
+td {
     border: 1px solid #FFA119 !important;
+}
+
+th {
+    border: 1px solid #0f0f0f !important;
 }
 
 .container {
@@ -45,7 +48,8 @@ table tbody p {
 
 table p,
 table h4,
-table tbody #buttons {
+table tbody #buttons,
+table tbody #checkVisited{
     text-align: center;
     vertical-align: inherit;
 }
@@ -99,4 +103,8 @@ table tbody #buttons {
 
 .table-checked {
     cursor: pointer !important;
+}
+
+.hide {
+    display: none;
 }
