@@ -1,5 +1,6 @@
 $(document).ready(function () {
     drawTable();
+    colorStars();
     $('#myForm').submit(function () {
         onSubmit();
         return false;
@@ -25,15 +26,17 @@ var onSubmit = function () {
         store.add(data);
         drawTable();
     }
+    $("#checkEdit").val(0);
 };
 
 var getFormData = function () {
     var city = $("[name=city]").val();
     var visited = $("[name=checkbox]").is(":checked");
+    var stars = $("#result").val();
     var dataObj = {
         id: i++,
         name: city,
-        stars: 3,
+        stars: stars,
         visited: visited
     };
     clearInputs();
@@ -54,9 +57,14 @@ var drawTable = function () {
 
     var populate = function (data) {
         $.each(data, function (index, element) {
+            var stele ="";
+            for (var i=1; i<= element.stars; i++)
+            {
+                stele = stele + "&#9734;";
+            }
             $("#the-table tbody").append(tmpl("tpl", {
                 city: element.name,
-                stars: element.stars,
+                stars: stele,
                 visited: element.visited,
                 id: element.id
             }));
@@ -66,21 +74,29 @@ var drawTable = function () {
 };
 
 var attachEvents = function (data) {
-    $(".remove").on("click", function () {
+    $(".remove").confirm( {
+        message: "Are you sure?",
+        onConfirm: function () {
         var id = $(this).closest("tr").data("id");
-        console.log(id);
         store.delete(id);
         clearInputs();
         drawTable();
+        },
+        onReject: function (){
+
+        }
     });
 
     $(".edit").on("click", function () {
         var id = $(this).closest("tr").data("id");
         $("#checkEdit").val(id);
         $("#cancel").attr("type", "button");
+
         $.each(data, function (index, element) {
             if (element.id == id) {
                 $("#city").val(element.name);
+                $("#result").val(element.stars).change();
+
                 if (element.visited == 1) {
                     $("#checkbox").prop('checked', true);
                 }
@@ -95,5 +111,9 @@ var attachEvents = function (data) {
 var clearInputs = function () {
     $("#city").val('');
     $("#checkbox").attr('checked', false);
-    $("#result").val(0);
+    $("#result").val(0).change();
+};
+
+var colorStars = function() {
+        $('[name="review"]').stars();
 };

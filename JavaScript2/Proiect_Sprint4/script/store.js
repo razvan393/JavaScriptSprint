@@ -25,6 +25,7 @@ var store = (function () {
     return {
         getAll: function () {
             return new Promise(function (resolve, reject) {
+               //resolve data va fi in call ajax...va da eroare deoarece returneaza obiect nu array
                 resolve(data);
             });
         },

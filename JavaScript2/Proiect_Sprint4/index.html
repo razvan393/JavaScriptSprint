@@ -17,14 +17,7 @@
             <br/>
             <input name="city" id="city" type="text"/><br/>
             <label for="result">Stars:</label><br/>
-            <div id="stars" class="rating">
-                <span id="1">&#9734; </span>
-                <span id="2">&#9734; </span>
-                <span id="3">&#9734; </span>
-                <span id="4">&#9734; </span>
-                <span id="5">&#9734; </span>
-            </div>
-            <input name="stars" type="hidden" id="result"/>
+            <input id="result" type="text" class="stars" name="review" value="0"><br/>
             <input type="hidden" id="checkEdit"/>
             <input name="checkbox" id="checkbox" type="checkbox"/>
             <label for="checkbox">Visited</label><br/>
@@ -74,7 +67,7 @@
         </td>
         <td id="buttons">
             <a class="edit btn" href="#">Edit</a>
-            <a class="remove btn" href="#">Remove</a>
+            <a class="remove btn" href="#">Delete</a>
         </td>
     </tr>
 </script>
@@ -83,5 +76,7 @@
 <script type="text/javascript" src="script/assert.js"></script>
 <script type="text/javascript" src="script/template-engine.js"></script>
 <script type="text/javascript" src="script/store.js"></script>
+<script type="text/javascript" src="script/starsPlugin.js"></script>
+<script type="text/javascript" src="script/confirmDeletePlugin.js"></script>
 </body>
 </html>
