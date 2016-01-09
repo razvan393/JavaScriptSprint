@@ -60,7 +60,7 @@ var drawTable = function () {
             var stele ="";
             for (var i=1; i<= element.stars; i++)
             {
-                stele = stele + "&#9734;";
+                stele = stele + "&#9733;";
             }
             $("#the-table tbody").append(tmpl("tpl", {
                 city: element.name,
