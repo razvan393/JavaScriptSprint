@@ -12,8 +12,6 @@ $(document).ready(function () {
     });
 });
 
-var i = 4;
-
 var onSubmit = function () {
     var data = getFormData();
     var checkEdit = $("#checkEdit").val();
@@ -34,10 +32,9 @@ var getFormData = function () {
     var visited = $("[name=checkbox]").is(":checked");
     var stars = $("#result").val();
     var dataObj = {
-        id: i++,
         name: city,
-        stars: stars,
-        visited: visited
+        visited: visited ? 1 : 0,
+        stars: parseInt(stars)
     };
     clearInputs();
     return dataObj;
@@ -63,11 +60,12 @@ var drawTable = function () {
                 stele = stele + "&#9733;";
             }
             $("#the-table tbody").append(tmpl("tpl", {
+                id: element.id,
                 city: element.name,
                 stars: stele,
-                visited: element.visited,
-                id: element.id
+                visited: element.visited
             }));
+            console.log(element.id);
         });
         attachEvents(data);
     };
