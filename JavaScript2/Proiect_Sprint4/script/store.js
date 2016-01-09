@@ -1,3 +1,13 @@
+var $loader = $(".loader");
+
+var showLoader = function () {
+    $loader.attr("class","loader");
+};
+
+var hideLoader = function () {
+    $loader.attr("class","hide");
+}
+
 var store = (function () {
     // private
     var data = [];
@@ -9,7 +19,6 @@ var store = (function () {
                 $.ajax(citiesUrl, getSettings).done(function (data) {
                     resolve(data.list);
                 });
-
             });
         },
         add: function (item) {
@@ -20,7 +29,9 @@ var store = (function () {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    data: dataJSON
+                    data: dataJSON,
+                    beforeSend: showLoader(),
+                    complete: hideLoader()
                 }).done(function () {
                     $.ajax(citiesUrl).done(function (data) {
                         resolve(data);
@@ -37,7 +48,9 @@ var store = (function () {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    data: dataJSON
+                    data: dataJSON,
+                    beforeSend: showLoader(),
+                    complete: hideLoader()
                 }).done(function (data) {
                     resolve(data);
                 });
@@ -61,8 +74,10 @@ var head = {
 
 var getSettings = {
     type: 'GET',
-    headers: head
-};
+    headers: head,
+    beforeSend: showLoader(),
+    complete: showLoader()
+}
 
 /*
 var postSettings = {
@@ -79,5 +94,7 @@ var putSettings = {
 
 var deleteSettings = {
     type: 'DELETE',
-    headers: head
+    headers: head,
+    beforeSend: showLoader(),
+    complete: hideLoader()
 };

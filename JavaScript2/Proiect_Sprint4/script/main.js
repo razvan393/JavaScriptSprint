@@ -65,7 +65,6 @@ var drawTable = function () {
                 stars: stele,
                 visited: element.visited
             }));
-            console.log(element.id);
         });
         attachEvents(data);
     };
