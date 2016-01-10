@@ -1,11 +1,14 @@
 var $loader = $(".loader");
+var $inputs = $("input");
 
 var showLoader = function () {
     $loader.attr("class","loader");
+    $inputs.prop("disabled", true);
 };
 
 var hideLoader = function () {
     $loader.attr("class","hide");
+    $inputs.prop("disabled", false);
 }
 
 var store = (function () {
@@ -19,6 +22,9 @@ var store = (function () {
                 $.ajax(citiesUrl, getSettings).done(function (data) {
                     resolve(data.list);
                 });
+                /*$.ajax(citiesUrl, getSettings).fail(function (data) {
+                 reject(data.error);
+                 });*/
             });
         },
         add: function (item) {
@@ -80,17 +86,17 @@ var getSettings = {
 }
 
 /*
-var postSettings = {
-    type: 'POST',
-    headers: head,
-    data: dataJSON
-};
+ var postSettings = {
+ type: 'POST',
+ headers: head,
+ data: dataJSON
+ };
 
-var putSettings = {
-    type: 'PUT',
-    headers: head,
-    data: dataJSON
-};*/
+ var putSettings = {
+ type: 'PUT',
+ headers: head,
+ data: dataJSON
+ };*/
 
 var deleteSettings = {
     type: 'DELETE',

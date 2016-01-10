@@ -15,29 +15,66 @@ $(document).ready(function () {
 var onSubmit = function () {
     var data = getFormData();
     var checkEdit = $("#checkEdit").val();
+    var $errors = $("#errors");
+
     $("#cancel").attr("type", "hidden");
-    if (checkEdit > 0) {
-        store.update(checkEdit, data);
-        drawTable();
+    if(typeof data == "string"){
+        $errors.attr("class","");
+        $errors.val(data);
     }
-    else {
-        store.add(data);
-        drawTable();
+    else{
+        $errors.attr("class","hide");
+        if (checkEdit > 0) {
+            store.update(checkEdit, data);
+            drawTable();
+        }
+        else {
+            store.add(data);
+            drawTable();
+        }
+        $("#checkEdit").val(0);
     }
-    $("#checkEdit").val(0);
 };
 
 var getFormData = function () {
     var city = $("[name=city]").val();
     var visited = $("[name=checkbox]").is(":checked");
     var stars = $("#result").val();
-    var dataObj = {
-        name: city,
-        visited: visited ? 1 : 0,
-        stars: parseInt(stars)
-    };
-    clearInputs();
-    return dataObj;
+    var dataObj;
+
+    if (!checkLength(city)){
+        dataObj = "Introduce-ti un nume de oras";
+        return dataObj;
+    }
+    else if(!checkCity(city)) {
+        dataObj = "Introduce-ti un oras valid";
+        return dataObj;
+    }
+    else if (!checkStars(stars)) {
+        dataObj = "Introduce-ti un rating";
+        return dataObj;
+    }
+    else{
+        dataObj = {
+            name: city,
+            visited: visited ? 1 : 0,
+            stars: parseInt(stars)
+        };
+        clearInputs();
+        return dataObj;
+    }
+};
+
+var checkLength = function (name) {
+    return name.length ? true : false;
+};
+
+var checkCity = function (name) {
+    return name.match('^[a-zA-Z]{2,20}$');
+};
+
+var checkStars = function (number) {
+    return (number > 0);
 };
 
 var drawTable = function () {
@@ -74,13 +111,12 @@ var attachEvents = function (data) {
     $(".remove").confirm( {
         message: "Are you sure?",
         onConfirm: function () {
-        var id = $(this).closest("tr").data("id");
-        store.delete(id);
-        clearInputs();
-        drawTable();
+            var id = $(this).closest("tr").data("id");
+            store.delete(id);
+            clearInputs();
+            drawTable();
         },
         onReject: function (){
-
         }
     });
 
@@ -112,5 +148,5 @@ var clearInputs = function () {
 };
 
 var colorStars = function() {
-        $('[name="review"]').stars();
+    $('[name="review"]').stars();
 };

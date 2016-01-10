@@ -17,6 +17,11 @@ html, body {
     padding: 0;
 }
 
+#errors{
+    width: 50%;
+    margin: 5px 0;
+}
+
 td {
     padding: 0 !important;
 }
@@ -33,7 +38,7 @@ th {
     border: 1px solid #0f0f0f !important;
 }
 
-.container {
+.container{
     width: 100%;
 }
 
