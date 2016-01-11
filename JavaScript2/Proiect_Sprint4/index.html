@@ -54,8 +54,14 @@
             </tr>
             </tfoot>
         </table>
-        <div class="loader">Loading...</div>
+        <div id='page_navigation'>
+            <input id="numarPagini" type="hidden" value="0" />
+            <span id="prev"><</span>
+            <span id="page">1</span>
+            <span id="next">></span>
+        </div>
     </div>
+    <div class="loader">Loading...</div>
 </div>
 <script type="text/html" id="tpl">
     <tr data-id="<%=id%>">

@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    drawTable();
+    var currentPage = parseInt($("#page").text());
+    drawTable(currentPage);
     colorStars();
     $('#myForm').submit(function () {
         onSubmit();
@@ -9,6 +10,12 @@ $(document).ready(function () {
         clearInputs();
         $("#checkEdit").val(0);
         $("#cancel").attr("type", "hidden");
+    });
+    $("#prev").click(function () {
+        prev();
+    });
+    $("#next").click(function () {
+        next();
     });
 });
 
@@ -24,13 +31,11 @@ var onSubmit = function () {
     }
     else{
         $errors.attr("class","hide");
-        if (checkEdit > 0) {
+        if (isNaN(checkEdit)) {
             store.update(checkEdit, data);
-            drawTable();
         }
         else {
             store.add(data);
-            drawTable();
         }
         $("#checkEdit").val(0);
     }
@@ -77,12 +82,13 @@ var checkStars = function (number) {
     return (number > 0);
 };
 
-var drawTable = function () {
-    $("#the-table tbody").html('');
-    store.getAll().then(function (data) {
-        if (data.length > 0) {
+var drawTable = function (id) {
+    $("#the-table tbody").empty();
+    store.getAll(id).then(function (data) {
+        $("#numarPagini").attr("value",data.totalPages);
+        if (data.list.length > 0) {
             $("tfoot").attr("class","hide");
-            populate(data);
+            populate(data.list);
         }
         else {
             $("tfoot").attr("class","");
@@ -108,36 +114,22 @@ var drawTable = function () {
 };
 
 var attachEvents = function (data) {
-    $(".remove").confirm( {
+    $("table tbody .remove").confirm( {
         message: "Are you sure?",
         onConfirm: function () {
             var id = $(this).closest("tr").data("id");
             store.delete(id);
             clearInputs();
-            drawTable();
         },
         onReject: function (){
         }
     });
 
-    $(".edit").on("click", function () {
+    $("table tbody .edit").on("click", function () {
         var id = $(this).closest("tr").data("id");
         $("#checkEdit").val(id);
         $("#cancel").attr("type", "button");
-
-        $.each(data, function (index, element) {
-            if (element.id == id) {
-                $("#city").val(element.name);
-                $("#result").val(element.stars).change();
-
-                if (element.visited == 1) {
-                    $("#checkbox").prop('checked', true);
-                }
-                else {
-                    $("#checkbox").prop('checked', false);
-                }
-            }
-        });
+        store.get(id);
     });
 };
 
@@ -149,4 +141,23 @@ var clearInputs = function () {
 
 var colorStars = function() {
     $('[name="review"]').stars();
+};
+
+var prev = function () {
+    var currentPage = parseInt($("#page").text());
+    if(currentPage >1){
+        currentPage-=1;
+        $("#page").text(currentPage);
+        drawTable(currentPage);
+    }
+};
+
+var next = function () {
+    var currentPage = parseInt($("#page").text());
+    var totalPages = parseInt($("#numarPagini").attr("value"));
+    if(currentPage < totalPages){
+        currentPage+=1;
+        $("#page").text(currentPage);
+        drawTable(currentPage);
+    }
 };

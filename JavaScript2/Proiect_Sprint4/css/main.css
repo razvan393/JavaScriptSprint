@@ -39,7 +39,7 @@ th {
 }
 
 .container{
-    width: 100%;
+    width: 100%!important;
 }
 
 table tbody p {
@@ -54,7 +54,8 @@ table tbody p {
 table p,
 table h4,
 table tbody #buttons,
-table tbody #checkVisited{
+table tbody #checkVisited,
+#page_navigation{
     text-align: center;
     vertical-align: inherit;
 }
@@ -71,6 +72,10 @@ table tbody #checkVisited{
     width: 55%;
     float: right;
     margin-left: 5%;
+}
+
+.loader{
+    width: 10%;
 }
 
 .container,
@@ -106,7 +111,8 @@ table tbody #checkVisited{
     text-decoration: none;
 }
 
-.table-checked {
+.table-checked,
+span{
     cursor: pointer !important;
 }
 
