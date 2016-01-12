@@ -1,143 +1,63 @@
-var $loader = $(".loader");
-var $inputs = $("input");
-var $city = $("#city");
-var $result = $("#result");
-var $checkbox = $("#checkbox");
-var $page = $("#page");
-var currentPage = parseInt($page.text());
-
-var showLoader = function () {
-    $loader.attr("class","loader");
-    $inputs.prop("readonly", true);
-};
-
-var hideLoader = function () {
-    $loader.attr("class","hide");
-    $inputs.prop("readonly", false);
-}
-
 var store = (function () {
     // private
-    var data = [];
+    var apiUrl = "http://server.godev.ro:8080/api/razvan/entries";
+    var headers = {
+        'Content-Type': 'application/json'
+    };
+
+    var errorHandler = function(reject) {
+        return function (xhr) {
+            if(xhr.status == 409) {
+                reject(xhr.responseJSON.error);
+            } else {
+                alert('An unknown error occurred');
+            }
+        };
+    };
 
     //public
     return {
-        getAll: function (id) {
-            showLoader();
+        getAll: function (page) {
             return new Promise(function (resolve, reject) {
-                var newUrl = citiesUrl + "?page="+id;
-                $.ajax(newUrl, getSettings).done(function (data) {
-                    resolve(data);
-                }).fail(function (xhr) {
-                    alert(xhr.status);
-                });
-                hideLoader();
+                $.ajax(apiUrl + "?page=" + page, {
+                    type: 'GET',
+                    headers: headers
+                }).done(resolve).fail(errorHandler(reject));
             });
         },
         get: function (id){
-            showLoader();
             return new Promise(function (resolve, reject) {
-                var newUrl = citiesUrl + "/"+ id;
-                $.ajax(newUrl, getSettings).done(function (data) {
-                    resolve(data);
-                    $city.val(data.name);
-                    $result.val(data.stars).change();
-
-                    if (data.visited == 1) {
-                        $checkbox.prop('checked', true);
-                    }
-                    else {
-                        $checkbox.prop('checked', false);
-                    }
-                }).fail(function (xhr) {
-                    alert(xhr.status);
-                });
-                hideLoader();
+                $.ajax(apiUrl + "/"+ id, {
+                    type: 'GET',
+                    headers: headers
+                }).done(resolve).fail(errorHandler(reject));
             });
         },
         add: function (item) {
-            showLoader();
             return new Promise(function (resolve, reject) {
-                var dataJSON = JSON.stringify(item);
-                $.ajax(citiesUrl,{
+                $.ajax(apiUrl, {
                     type: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: dataJSON
-                }).done(function () {
-                    currentPage = parseInt($page.text());
-                    $.ajax(citiesUrl).done(function (data) {
-                        resolve(data);
-                        drawTable(currentPage);
-                    }).fail(function (xhr) {
-                        alert(xhr.status);
-                    });
-                });
-                hideLoader();
+                    headers: headers,
+                    data: JSON.stringify(item)
+                }).done(resolve).fail(errorHandler(reject));
             });
         },
         update: function (id, updateData) {
-            showLoader();
             return new Promise(function (resolve, reject) {
-                var newUrl = citiesUrl+"/"+id;
-                var dataJSON = JSON.stringify(updateData);
-                $.ajax(newUrl,{
+                $.ajax(apiUrl + "/" + id, {
                     type: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: dataJSON
-                }).done(function (data) {
-                    currentPage = parseInt($page.text());
-                    resolve(data);
-                    drawTable(currentPage);
-                }).fail(function (xhr) {
-                    alert(xhr.status);
-                });
-                hideLoader();
+                    headers: headers,
+                    data: JSON.stringify(updateData)
+                }).done(resolve).fail(errorHandler(reject));
             });
         },
         delete: function (id) {
-            showLoader();
             return new Promise(function (resolve, reject) {
-                var newUrl = citiesUrl+"/"+id;
-                $.ajax(newUrl, deleteSettings).done(function (data) {
-                    currentPage = parseInt($page.text());
-                    resolve(data);
-                    drawTable(currentPage);
-                }).fail(function (xhr) {
-                    alert(xhr.status);
-                });
-                hideLoader();
+                $.ajax(apiUrl + "/" + id, {
+                    type: 'DELETE',
+                    headers: headers
+                }).done(resolve).fail(errorHandler(reject));
             });
         }
     };
 })();
-var citiesUrl = "http://server.godev.ro:8080/api/razvan/entries";
-var head = {
-    'Content-Type': 'application/json'
-};
-
-var getSettings = {
-    type: 'GET',
-    headers: head
-}
-
-/*
- var postSettings = {
- type: 'POST',
- headers: head,
- data: dataJSON
- };
-
- var putSettings = {
- type: 'PUT',
- headers: head,
- data: dataJSON
- };*/
-
-var deleteSettings = {
-    type: 'DELETE',
-    headers: head
-};

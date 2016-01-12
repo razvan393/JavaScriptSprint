@@ -74,14 +74,14 @@ table tbody #checkVisited,
     margin-left: 5%;
 }
 
-.loader{
-    width: 10%;
-}
-
 .container,
 .form,
 .store {
     display: inline-block;
+}
+
+.container {
+    position: relative;
 }
 
 .btn {
