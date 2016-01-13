@@ -17,9 +17,9 @@ var store = (function () {
 
     //public
     return {
-        getAll: function (page) {
+        getAll: function (page, field, order) {
             return new Promise(function (resolve, reject) {
-                $.ajax(apiUrl + "?page=" + page, {
+                $.ajax(apiUrl + "?page=" + page + "&sortField=" + field + "&sortDir=" + order, {
                     type: 'GET',
                     headers: headers
                 }).done(resolve).fail(errorHandler(reject));

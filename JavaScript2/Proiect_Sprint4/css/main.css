@@ -76,7 +76,9 @@ table tbody #checkVisited,
 
 .container,
 .form,
-.store {
+.store,
+.arrow-up,
+.arrow-down{
     display: inline-block;
 }
 
@@ -144,4 +146,39 @@ span{
 
 #close {
     float: right;
+}
+
+.arrows {
+    text-align: right!important;
+    width: 20%;
+    float: right;
+    position: relative;
+    height: 20px;
+}
+
+thead th h4{
+    width: 80%;
+    display: inline-block;
+}
+
+.arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+
+    border-bottom: 5px solid black;
+}
+
+.arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+
+    border-top: 5px solid black;
+
+    position: absolute;
+    bottom: -2px;
+    right: 0;
 }

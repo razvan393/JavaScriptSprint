@@ -70,7 +70,7 @@ var checkStars = function (number) {
 var drawTable = function () {
     showLoader();
     $("#the-table tbody").empty();
-    store.getAll(currentPage,5,sortField,sortDir).then(function (data) {
+    store.getAll(currentPage,sortField,sortDir).then(function (data) {
         $("#numarPagini").attr("value",data.totalPages);
         totalPages = data.totalPages;
         $("#totalPages").text(totalPages);
@@ -95,6 +95,7 @@ var drawTable = function () {
 var populate = function (data) {
     $.each(data, function (index, element) {
         var stele ="";
+
         for (var i=1; i<= element.stars; i++)
         {
             stele = stele + "&#9733;";
@@ -110,7 +111,7 @@ var populate = function (data) {
 };
 
 var attachEvents = function (data) {
-    $("table tbody .remove").confirm( {
+    $("#the-table tbody .remove").confirm( {
         message: "Are you sure?",
         onConfirm: function () {
             showLoader();
@@ -125,9 +126,10 @@ var attachEvents = function (data) {
         }
     });
 
-    $("table tbody .edit").on("click", function () {
+    $("#the-table tbody .edit").on("click", function () {
         showLoader();
         var id = $(this).closest("tr").data("id");
+
         $checkEdit.val(id);
         $("#cancel").attr("type", "button");
         store.get(id).then(function (data) {
@@ -143,12 +145,12 @@ var attachEvents = function (data) {
             hideLoader();
         });
     });
-    $("tr").on("click", function () {
-        var giphyName = ($(this).data("name"));
+    $(".city").on("click", function () {
+        var giphyName = ($(this).closest("tr").data("name"));
         giphy(giphyName);
     });
     $("#close").on("click", function () {
-       $("#giphy").attr("class","hide");
+        $("#giphy").attr("class","hide");
     });
 };
 
@@ -190,21 +192,34 @@ var hideLoader = function () {
 }
 
 var giphy = function (name) {
-    $("iframe").prop("src","")
-    var urlGiphy= "http://api.giphy.com/v1/gifs/search?q="+name+"&api_key=dc6zaTOxFJmzC&limit=5"
+    $("#giphy iframe").prop("src","");
+    var urlGiphy= "http://api.giphy.com/v1/gifs/search?q="+name+"&api_key=dc6zaTOxFJmzC&limit=5";
+    var embedUrl = "";
     var xhr = $.get(urlGiphy);
-    var embedUrl
     xhr.done(function(data) {
         if(data.data[0]){
             embedUrl = data.data[0].embed_url;
         }
         else{
-            embedUrl = "http://giphy.com/embed/10oRQhnkcc72Le";
+            embedUrl = "https://giphy.com/embed/10oRQhnkcc72Le";
         }
-        $("iframe").prop("src", embedUrl);
+        $("#giphy iframe").prop("src", embedUrl);
         $("#giphy").attr("class","");
     });
 };
+
+var setArrows = function (event, name) {
+    if($(name).data("sort") == "asc"){
+        $(name).data("sort","desc");
+        $(".arrow-down, .arrow-up").removeClass("hide");
+        $(event).find(".arrow-down").addClass("hide");
+    }
+    else{
+        $(name).data("sort","asc")
+        $(".arrow-down, .arrow-up").removeClass("hide");
+        $(event).find(".arrow-up").addClass("hide");
+    }
+}
 
 $(document).ready(function () {
     drawTable(parseInt($page.text()));
@@ -224,37 +239,25 @@ $(document).ready(function () {
     $("#next").click(function () {
         next();
     });
-    $("#h-city").on("click",function () {
-        sortDir = "desc";
+    $("#h-city").click(function () {
+        sortDir = $("#h-city").data("sort");
         sortField = "name";
         drawTable();
+        setArrows(this, "#h-city");
         return false;
     });
-    /*$("#last-city").on("click",function () {
-     console.log($("#last-city"));
-     store.getAll(currentPage,5,"name","desc").then(function () {
-     drawTable();
-     return false;
-     });
-     });*/
-    /*$("#h-stars").click(function () {
-     store.getAll(currentPage,5,"stars","asc").then(function () {
-     drawTable();
-     });
-     });
-     $("#h-stars").dblclick(function () {
-     store.getAll(currentPage,5,"stars","desc").then(function () {
-     drawTable();
-     });
-     });
-     $("#h-visited").click(function () {
-     store.getAll(currentPage,5,"visited","asc").then(function () {
-     drawTable();
-     });
-     });
-     $("#h-visited").dblclick(function () {
-     store.getAll(currentPage,5,"visited","desc").then(function () {
-     drawTable();
-     });
-     });*/
+    $("#h-stars").click(function () {
+        sortDir = $("#h-stars").data("sort");
+        sortField = "stars";
+        drawTable();
+        setArrows(this, "#h-stars");
+        return false;
+    });
+    $("#h-visited").click(function () {
+        sortDir = $("#h-visited").data("sort");
+        sortField = "visited";
+        drawTable();
+        setArrows(this, "#h-visited");
+        return false;
+    });
 });
