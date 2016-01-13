@@ -64,10 +64,11 @@
         </div>
     </div>
     <div id="loader" class="hide">Loading...</div>
+    <div id="giphy" class="hide"><span id="close">X</span><iframe src="" width="500" height="280" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
 </div>
 <script type="text/html" id="tpl">
-    <tr data-id="<%=id%>">
-        <td>
+    <tr data-id="<%=id%>" data-name="<%=city%>">
+        <td class="city">
             <p><%=city%></p>
         </td>
         <td>

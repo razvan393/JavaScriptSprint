@@ -131,3 +131,17 @@ span{
 .star.hover {
     color: gold;
 }
+
+#giphy {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    margin: 0 25%;
+    top: 0;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+#close {
+    float: right;
+}

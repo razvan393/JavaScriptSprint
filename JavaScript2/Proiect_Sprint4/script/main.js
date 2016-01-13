@@ -2,6 +2,8 @@ var $page = $("#page");
 var $checkEdit = $("#checkEdit");
 var currentPage = 1;
 var totalPages = 0;
+var sortField = "";
+var sortDir = "";
 
 var onSubmit = function () {
     showLoader();
@@ -68,7 +70,7 @@ var checkStars = function (number) {
 var drawTable = function () {
     showLoader();
     $("#the-table tbody").empty();
-    store.getAll(currentPage).then(function (data) {
+    store.getAll(currentPage,5,sortField,sortDir).then(function (data) {
         $("#numarPagini").attr("value",data.totalPages);
         totalPages = data.totalPages;
         $("#totalPages").text(totalPages);
@@ -141,6 +143,13 @@ var attachEvents = function (data) {
             hideLoader();
         });
     });
+    $("tr").on("click", function () {
+        var giphyName = ($(this).data("name"));
+        giphy(giphyName);
+    });
+    $("#close").on("click", function () {
+       $("#giphy").attr("class","hide");
+    });
 };
 
 var clearInputs = function () {
@@ -180,6 +189,23 @@ var hideLoader = function () {
     $("inputs").prop("readonly", false);
 }
 
+var giphy = function (name) {
+    $("iframe").prop("src","")
+    var urlGiphy= "http://api.giphy.com/v1/gifs/search?q="+name+"&api_key=dc6zaTOxFJmzC&limit=5"
+    var xhr = $.get(urlGiphy);
+    var embedUrl
+    xhr.done(function(data) {
+        if(data.data[0]){
+            embedUrl = data.data[0].embed_url;
+        }
+        else{
+            embedUrl = "http://giphy.com/embed/10oRQhnkcc72Le";
+        }
+        $("iframe").prop("src", embedUrl);
+        $("#giphy").attr("class","");
+    });
+};
+
 $(document).ready(function () {
     drawTable(parseInt($page.text()));
     colorStars();
@@ -198,4 +224,37 @@ $(document).ready(function () {
     $("#next").click(function () {
         next();
     });
+    $("#h-city").on("click",function () {
+        sortDir = "desc";
+        sortField = "name";
+        drawTable();
+        return false;
+    });
+    /*$("#last-city").on("click",function () {
+     console.log($("#last-city"));
+     store.getAll(currentPage,5,"name","desc").then(function () {
+     drawTable();
+     return false;
+     });
+     });*/
+    /*$("#h-stars").click(function () {
+     store.getAll(currentPage,5,"stars","asc").then(function () {
+     drawTable();
+     });
+     });
+     $("#h-stars").dblclick(function () {
+     store.getAll(currentPage,5,"stars","desc").then(function () {
+     drawTable();
+     });
+     });
+     $("#h-visited").click(function () {
+     store.getAll(currentPage,5,"visited","asc").then(function () {
+     drawTable();
+     });
+     });
+     $("#h-visited").dblclick(function () {
+     store.getAll(currentPage,5,"visited","desc").then(function () {
+     drawTable();
+     });
+     });*/
 });
