@@ -1,5 +1,7 @@
-var $page = $("#page");
-var $checkEdit = $("#checkEdit");
+var $tabel ;
+var $form ;
+var $paginare ;
+var $container ;
 var currentPage = 1;
 var totalPages = 0;
 var sortField = "";
@@ -8,26 +10,26 @@ var sortDir = "";
 var onSubmit = function () {
     showLoader();
     var data = getFormData();
-    var $errors = $("#errors");
+    var $errors = $form.find("#errors");
 
-    $("#cancel").attr("type", "hidden");
+    $form.find("#cancel").attr("type", "hidden");
     if(typeof data == "string"){
         $errors.attr("class","");
         $errors.val(data);
     }
     else{
         $errors.attr("class","hide");
-        if (isNaN($checkEdit.val())) {
-            store.update($checkEdit.val(), data).then(function () {
+        if (isNaN($form.find("#checkEdit").val())) {
+            store.update($form.find("#checkEdit").val(), data).then(function () {
                 drawTable();
-                $checkEdit.val(0);
+                $form.find("#checkEdit").val(0);
                 hideLoader();
             });
         }
         else {
             store.add(data).then(function () {
                 drawTable();
-                $checkEdit.val(0);
+                $form.find("#checkEdit").val(0);
                 hideLoader();
             });
         }
@@ -35,9 +37,9 @@ var onSubmit = function () {
 };
 
 var getFormData = function () {
-    var city = $("[name=city]").val();
-    var visited = $("[name=checkbox]").is(":checked");
-    var stars = $("#result").val();
+    var city = $form.find("#city").val();
+    var visited = $form.find("#checkbox").is(":checked");
+    var stars = $form.find("#result").val();
     var dataObj;
 
     if (!checkLength(city)){
@@ -69,11 +71,11 @@ var checkStars = function (number) {
 
 var drawTable = function () {
     showLoader();
-    $("#the-table tbody").empty();
+    $tabel.find("tbody").empty();
     store.getAll(currentPage,sortField,sortDir).then(function (data) {
-        $("#numarPagini").attr("value",data.totalPages);
+        $paginare.find("#numarPagini").attr("value",data.totalPages);
         totalPages = data.totalPages;
-        $("#totalPages").text(totalPages);
+        $paginare.find("#totalPages").text(totalPages);
         if (currentPage <= totalPages) {
             if (data.list.length > 0) {
                 $("tfoot").attr("class", "hide");
@@ -86,9 +88,10 @@ var drawTable = function () {
         }
         else{
             currentPage = totalPages;
-            $page.text(currentPage);
+            $paginare.find("#page_number").text(currentPage);
             drawTable();
         }
+        createPages();
     });
 };
 
@@ -100,7 +103,7 @@ var populate = function (data) {
         {
             stele = stele + "&#9733;";
         }
-        $("#the-table tbody").append(tmpl("tpl", {
+        $tabel.find("tbody").append(tmpl("tpl", {
             id: element.id,
             city: element.name,
             stars: stele,
@@ -111,7 +114,7 @@ var populate = function (data) {
 };
 
 var attachEvents = function (data) {
-    $("#the-table tbody .remove").confirm( {
+    $tabel.find("tbody .remove").confirm( {
         message: "Are you sure?",
         onConfirm: function () {
             showLoader();
@@ -126,73 +129,124 @@ var attachEvents = function (data) {
         }
     });
 
-    $("#the-table tbody .edit").on("click", function () {
+    $tabel.find("tbody .edit").on("click", function () {
         showLoader();
         var id = $(this).closest("tr").data("id");
 
-        $checkEdit.val(id);
-        $("#cancel").attr("type", "button");
+        $form.find("#checkEdit").val(id);
+        $form.find("#cancel").attr("type", "button");
         store.get(id).then(function (data) {
-            $("#city").val(data.name);
-            $("#result").val(data.stars).change();
-
+            $form.find("#city").val(data.name);
+            $form.find("#result").val(data.stars).change();
             if (data.visited == 1) {
-                $("#checkbox").prop('checked', true);
+                $form.find("#checkbox").prop('checked', true);
             }
             else {
-                $("#checkbox").prop('checked', false);
+                $form.find("#checkbox").prop('checked', false);
             }
             hideLoader();
         });
     });
-    $(".city").on("click", function () {
+    $tabel.find(".city").on("click", function () {
         var giphyName = ($(this).closest("tr").data("name"));
         giphy(giphyName);
     });
-    $("#close").on("click", function () {
-        $("#giphy").attr("class","hide");
+    $container.find("#giphy").on("click", function () {
+        $container.find("#giphy-container").attr("class","hide");
     });
 };
 
 var clearInputs = function () {
-    $("#city").val('');
-    $("#checkbox").attr('checked', false);
-    $("#result").val(0).change();
+    $form.find("#city").val('');
+    $form.find("#checkbox").attr('checked', false);
+    $form.find("#result").val(0).change();
 };
 
 var colorStars = function() {
-    $('[name="review"]').stars();
+    $form.find("#result").stars();
 };
 
 var prev = function () {
     if(currentPage >1){
         currentPage-=1;
-        $page.text(currentPage);
+        $paginare.find("#page_number").text(currentPage);
         drawTable();
     }
 };
 
 var next = function () {
-    var totalPages = parseInt($("#numarPagini").attr("value"));
+    var totalPages = parseInt($paginare.find("#numarPagini").attr("value"));
     if(currentPage < totalPages){
         currentPage+=1;
-        $page.text(currentPage);
+        $paginare.find("#page_number").text(currentPage);
         drawTable();
     }
 };
 
+var selectPages = function (start, end) {
+    for(var i = end; i > start; i--){
+        $('<li><a href="#" class="prevnext pages btn">'+ i +'</a></li>').insertAfter($paginare.find("ul #prev-li"));
+    }
+};
+
+var createPages = function () {
+    var $listaPagini = $paginare.find("ul");
+    var totalPages = $paginare.find("#numarPagini").val();
+
+    $listaPagini.empty();
+    $listaPagini.append('<li><a href="#" id="first" class="prevnext btn">First</a></li>');
+    $listaPagini.append('<li id="prev-li"><a href="#" id="prev" class="prevnext btn"><<</a></li>');
+    $listaPagini.append('<li><a href="#" id="next" class="prevnext btn">>></a></li>');
+    $listaPagini.append('<li><a href="#" id="last" class="prevnext btn">Last</a></li>');
+    if(totalPages <= 5){
+        selectPages(0, totalPages);
+    }
+    else if(currentPage < 3){
+        selectPages(0, 5);
+    }
+    else if (currentPage > totalPages-3){
+        selectPages(totalPages-5, totalPages);
+    }
+    else{
+        selectPages(currentPage-3, currentPage+2);
+    }
+    $paginare.find("#prev").click(function () {
+        prev();
+    });
+    $paginare.find("#next").click(function () {
+        next();
+    })
+    $paginare.find(".pages").click(function () {
+        currentPage = parseInt($(this).text());
+        $paginare.find("#page_number").text(currentPage);
+        drawTable();
+    });
+    $paginare.find("#first").click(function () {
+        currentPage = 1;
+        $paginare.find("#page_number").text(currentPage);
+        drawTable();
+    });
+    $paginare.find("#last").click(function () {
+        currentPage = $paginare.find("#numarPagini").val();
+        $paginare.find("#page_number").text(currentPage);
+        drawTable();
+    });
+};
+
 var showLoader = function () {
-    $("#loader").attr("class","loader");
+    $container.find("#loader").attr("class","");
     $("inputs").prop("readonly", true);
 };
 
 var hideLoader = function () {
-    $("#loader").attr("class","hide");
+    $container.find("#loader").attr("class","hide");
     $("inputs").prop("readonly", false);
 }
 
 var giphy = function (name) {
-    $("#giphy iframe").prop("src","");
+    showLoader();
+    var $giphyIframe = $container.find("#giphy iframe");
+    $giphyIframe.prop("src","");
     var urlGiphy= "http://api.giphy.com/v1/gifs/search?q="+name+"&api_key=dc6zaTOxFJmzC&limit=5";
     var embedUrl = "";
     var xhr = $.get(urlGiphy);
@@ -203,61 +257,61 @@ var giphy = function (name) {
         else{
             embedUrl = "https://giphy.com/embed/10oRQhnkcc72Le";
         }
-        $("#giphy iframe").prop("src", embedUrl);
-        $("#giphy").attr("class","");
+        $giphyIframe.prop("src", embedUrl);
+        $container.find("#giphy-container").attr("class","");
+        hideLoader();
     });
 };
 
-var setArrows = function (event, name) {
+var setSortArrows = function (event, name) {
     if($(name).data("sort") == "asc"){
         $(name).data("sort","desc");
-        $(".arrow-down, .arrow-up").removeClass("hide");
+        $tabel.find(".arrow-down, .arrow-up").removeClass("hide");
         $(event).find(".arrow-down").addClass("hide");
     }
     else{
         $(name).data("sort","asc")
-        $(".arrow-down, .arrow-up").removeClass("hide");
+        $tabel.find(".arrow-down, .arrow-up").removeClass("hide");
         $(event).find(".arrow-up").addClass("hide");
     }
 }
 
 $(document).ready(function () {
-    drawTable(parseInt($page.text()));
+    $tabel = $("#the-table");
+    $form = $("#myForm");
+    $paginare = $(".pagination");
+    $container = $(".container");
+
+    drawTable(parseInt($paginare.find("#page_number").text()));
     colorStars();
-    $('#myForm').submit(function () {
+    $form.submit(function () {
         onSubmit();
         return false;
     });
-    $("#cancel").click(function () {
+    $form.find("#cancel").click(function () {
         clearInputs();
-        $("#checkEdit").val(0);
-        $("#cancel").attr("type", "hidden");
+        $form.find("#checkEdit").val(0);
+        $form.find("#cancel").attr("type", "hidden");
     });
-    $("#prev").click(function () {
-        prev();
-    });
-    $("#next").click(function () {
-        next();
-    });
-    $("#h-city").click(function () {
-        sortDir = $("#h-city").data("sort");
+    $tabel.find("#h-city").click(function () {
+        sortDir = $tabel.find("#h-city").data("sort");
         sortField = "name";
         drawTable();
-        setArrows(this, "#h-city");
+        setSortArrows(this, "#h-city");
         return false;
     });
-    $("#h-stars").click(function () {
-        sortDir = $("#h-stars").data("sort");
+    $tabel.find("#h-stars").click(function () {
+        sortDir = $tabel.find("#h-stars").data("sort");
         sortField = "stars";
         drawTable();
-        setArrows(this, "#h-stars");
+        setSortArrows(this, "#h-stars");
         return false;
     });
-    $("#h-visited").click(function () {
-        sortDir = $("#h-visited").data("sort");
+    $tabel.find("#h-visited").click(function () {
+        sortDir = $tabel.find("#h-visited").data("sort");
         sortField = "visited";
         drawTable();
-        setArrows(this, "#h-visited");
+        setSortArrows(this, "#h-visited");
         return false;
     });
 });
