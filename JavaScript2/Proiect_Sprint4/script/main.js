@@ -8,57 +8,46 @@ var sortField = "";
 var sortDir = "";
 
 var onSubmit = function () {
-    showLoader();
     var data = getFormData();
     var $errors = $form.find("#errors");
+    var erori = validateData(data.name, data.stars);
 
-    $form.find("#cancel").attr("type", "hidden");
-    if(typeof data == "string"){
+    $form.find("#cancel").addClass("hide");
+
+    if(erori != ""){
         $errors.attr("class","");
-        $errors.val(data);
-    }
-    else{
+        $errors.val(erori);
+    }else {
         $errors.attr("class","hide");
-        if (isNaN($form.find("#checkEdit").val())) {
-            store.update($form.find("#checkEdit").val(), data).then(function () {
-                drawTable();
-                $form.find("#checkEdit").val(0);
-                hideLoader();
-            });
-        }
-        else {
-            store.add(data).then(function () {
-                drawTable();
-                $form.find("#checkEdit").val(0);
-                hideLoader();
-            });
-        }
+        store.add(data).then(function () {
+            drawTable();
+            $form.find("#checkEdit").val(0);
+        });
     }
+    clearInputs();
+    return false;
 };
 
 var getFormData = function () {
     var city = $form.find("#city").val();
     var visited = $form.find("#checkbox").is(":checked");
     var stars = $form.find("#result").val();
-    var dataObj;
+    var dataObj = {
+        name: city,
+        visited: visited ? 1 : 0,
+        stars: parseInt(stars)
+    }
+    return dataObj;
+};
 
-    if (!checkLength(city)){
-        dataObj = "Introduce-ti un oras";
-        return dataObj;
+var validateData = function (city, stars) {
+    var error = ""
+    if(!checkLength(city)){
+        error = "Introduce-ti un oras";
+    }else if(!checkStars(stars)){
+        error = "Introduce-ti un rating";
     }
-    else if (!checkStars(stars)) {
-        dataObj = "Introduce-ti un rating";
-        return dataObj;
-    }
-    else{
-        dataObj = {
-            name: city,
-            visited: visited ? 1 : 0,
-            stars: parseInt(stars)
-        };
-        clearInputs();
-        return dataObj;
-    }
+    return error;
 };
 
 var checkLength = function (name) {
@@ -72,27 +61,29 @@ var checkStars = function (number) {
 var drawTable = function () {
     showLoader();
     $tabel.find("tbody").empty();
+
     store.getAll(currentPage,sortField,sortDir).then(function (data) {
-        $paginare.find("#numarPagini").attr("value",data.totalPages);
-        totalPages = data.totalPages;
-        $paginare.find("#totalPages").text(totalPages);
-        if (currentPage <= totalPages) {
-            if (data.list.length > 0) {
-                $("tfoot").attr("class", "hide");
-                populate(data.list);
+            totalPages = data.totalPages;
+            $paginare.find("#totalPages").text(totalPages);
+
+            if (currentPage <= totalPages) {
+                if (data.list.length > 0) {
+                    $("tfoot").attr("class", "hide");
+                    populate(data.list);
+                }else {
+                    $("tfoot").attr("class", "");
+                }
+            }else {
+                currentPage = totalPages;
+                $paginare.find("#page_number").text(currentPage);
+                drawTable();
             }
-            else {
-                $("tfoot").attr("class", "");
-            }
+            createPages();
             hideLoader();
-        }
-        else{
-            currentPage = totalPages;
-            $paginare.find("#page_number").text(currentPage);
-            drawTable();
-        }
-        createPages();
-    });
+        },
+        function (data) {
+            alert(data.error);
+        });
 };
 
 var populate = function (data) {
@@ -113,29 +104,31 @@ var populate = function (data) {
     attachEvents(data);
 };
 
-var attachEvents = function (data) {
-    $tabel.find("tbody .remove").confirm( {
-        message: "Are you sure?",
-        onConfirm: function () {
-            showLoader();
-            var id = $(this).closest("tr").data("id");
-            store.delete(id).then(function () {
-                drawTable();
-                clearInputs();
-                hideLoader();
-            });
+var deleteClicked = function () {
+    var id = $(this).closest("tr").data("id");
+
+    showLoader();
+
+    store.delete(id).then(function () {
+            drawTable();
+            clearInputs();
+            hideLoader();
         },
-        onReject: function (){
-        }
-    });
+        function (data) {
+            alert(data.error);
+        });
+};
 
-    $tabel.find("tbody .edit").on("click", function () {
-        showLoader();
-        var id = $(this).closest("tr").data("id");
+var editClicked = function () {
+    var id = $(this).closest("tr").data("id");
 
-        $form.find("#checkEdit").val(id);
-        $form.find("#cancel").attr("type", "button");
-        store.get(id).then(function (data) {
+    showLoader();
+    $form.find("#checkEdit").val(id);
+    $form.find("#cancel").removeClass("hide");
+    $form.find("#submit").removeClass("hide");
+    $form.find("#save").addClass("hide");
+
+    store.get(id).then(function (data) {
             $form.find("#city").val(data.name);
             $form.find("#result").val(data.stars).change();
             if (data.visited == 1) {
@@ -145,10 +138,24 @@ var attachEvents = function (data) {
                 $form.find("#checkbox").prop('checked', false);
             }
             hideLoader();
+        },
+        function (data) {
+            alert(data.error);
         });
+};
+
+var attachEvents = function () {
+    $tabel.find("tbody .remove").confirm( {
+        message: "Are you sure?",
+        onConfirm: deleteClicked,
+        onReject: function (){
+        }
     });
+
+    $tabel.find("tbody .edit").on("click", editClicked);
     $tabel.find(".city").on("click", function () {
         var giphyName = ($(this).closest("tr").data("name"));
+
         giphy(giphyName);
     });
     $container.find("#giphy").on("click", function () {
@@ -162,27 +169,6 @@ var clearInputs = function () {
     $form.find("#result").val(0).change();
 };
 
-var colorStars = function() {
-    $form.find("#result").stars();
-};
-
-var prev = function () {
-    if(currentPage >1){
-        currentPage-=1;
-        $paginare.find("#page_number").text(currentPage);
-        drawTable();
-    }
-};
-
-var next = function () {
-    var totalPages = parseInt($paginare.find("#numarPagini").attr("value"));
-    if(currentPage < totalPages){
-        currentPage+=1;
-        $paginare.find("#page_number").text(currentPage);
-        drawTable();
-    }
-};
-
 var selectPages = function (start, end) {
     for(var i = end; i > start; i--){
         $('<li><a href="#" class="prevnext pages btn">'+ i +'</a></li>').insertAfter($paginare.find("ul #prev-li"));
@@ -191,30 +177,36 @@ var selectPages = function (start, end) {
 
 var createPages = function () {
     var $listaPagini = $paginare.find("ul");
-    var totalPages = $paginare.find("#numarPagini").val();
 
     $listaPagini.empty();
     $listaPagini.append('<li><a href="#" id="first" class="prevnext btn">First</a></li>');
     $listaPagini.append('<li id="prev-li"><a href="#" id="prev" class="prevnext btn"><<</a></li>');
     $listaPagini.append('<li><a href="#" id="next" class="prevnext btn">>></a></li>');
     $listaPagini.append('<li><a href="#" id="last" class="prevnext btn">Last</a></li>');
+
     if(totalPages <= 5){
         selectPages(0, totalPages);
-    }
-    else if(currentPage < 3){
+    }else if(currentPage < 3){
         selectPages(0, 5);
-    }
-    else if (currentPage > totalPages-3){
+    }else if (currentPage > totalPages-3){
         selectPages(totalPages-5, totalPages);
-    }
-    else{
+    }else{
         selectPages(currentPage-3, currentPage+2);
     }
+
     $paginare.find("#prev").click(function () {
-        prev();
+        if(currentPage >1){
+            currentPage-=1;
+            $paginare.find("#page_number").text(currentPage);
+            drawTable();
+        }
     });
     $paginare.find("#next").click(function () {
-        next();
+        if(currentPage < totalPages){
+            currentPage+=1;
+            $paginare.find("#page_number").text(currentPage);
+            drawTable();
+        }
     })
     $paginare.find(".pages").click(function () {
         currentPage = parseInt($(this).text());
@@ -227,7 +219,7 @@ var createPages = function () {
         drawTable();
     });
     $paginare.find("#last").click(function () {
-        currentPage = $paginare.find("#numarPagini").val();
+        currentPage = totalPages;
         $paginare.find("#page_number").text(currentPage);
         drawTable();
     });
@@ -244,12 +236,14 @@ var hideLoader = function () {
 }
 
 var giphy = function (name) {
-    showLoader();
     var $giphyIframe = $container.find("#giphy iframe");
-    $giphyIframe.prop("src","");
     var urlGiphy= "http://api.giphy.com/v1/gifs/search?q="+name+"&api_key=dc6zaTOxFJmzC&limit=5";
     var embedUrl = "";
     var xhr = $.get(urlGiphy);
+
+    showLoader();
+    $giphyIframe.prop("src","");
+
     xhr.done(function(data) {
         if(data.data[0]){
             embedUrl = data.data[0].embed_url;
@@ -268,8 +262,7 @@ var setSortArrows = function (event, name) {
         $(name).data("sort","desc");
         $tabel.find(".arrow-down, .arrow-up").removeClass("hide");
         $(event).find(".arrow-down").addClass("hide");
-    }
-    else{
+    }else {
         $(name).data("sort","asc")
         $tabel.find(".arrow-down, .arrow-up").removeClass("hide");
         $(event).find(".arrow-up").addClass("hide");
@@ -277,41 +270,47 @@ var setSortArrows = function (event, name) {
 }
 
 $(document).ready(function () {
+
     $tabel = $("#the-table");
     $form = $("#myForm");
     $paginare = $(".pagination");
     $container = $(".container");
 
     drawTable(parseInt($paginare.find("#page_number").text()));
-    colorStars();
-    $form.submit(function () {
-        onSubmit();
-        return false;
+    $form.find("#result").stars();
+    $form.submit(onSubmit);
+
+    $form.find("#submit").click(function () {
+        var locData = getFormData();
+
+        showLoader()
+
+        store.update($form.find("#checkEdit").val(), locData).then(function () {
+                drawTable();
+                $form.find("#checkEdit").val(0);
+                $form.find("#submit").addClass("hide");
+                $form.find("#cancel").addClass("hide");
+                $form.find("#save").removeClass("hide");
+                hideLoader();
+            },
+            function (data) {
+                hideLoader();
+                alert(data.error);
+            });
+        clearInputs();
     });
     $form.find("#cancel").click(function () {
         clearInputs();
         $form.find("#checkEdit").val(0);
-        $form.find("#cancel").attr("type", "hidden");
+        $form.find("#cancel").addClass("hide");
+        $form.find("#submit").addClass("hide");
+        $form.find("#save").removeClass("hide");
     });
-    $tabel.find("#h-city").click(function () {
-        sortDir = $tabel.find("#h-city").data("sort");
-        sortField = "name";
+    $tabel.find("th").click(function (event) {
+        sortDir = $(event.target).data("sort");
+        sortField = $(event.target).data("field");
         drawTable();
-        setSortArrows(this, "#h-city");
-        return false;
-    });
-    $tabel.find("#h-stars").click(function () {
-        sortDir = $tabel.find("#h-stars").data("sort");
-        sortField = "stars";
-        drawTable();
-        setSortArrows(this, "#h-stars");
-        return false;
-    });
-    $tabel.find("#h-visited").click(function () {
-        sortDir = $tabel.find("#h-visited").data("sort");
-        sortField = "visited";
-        drawTable();
-        setSortArrows(this, "#h-visited");
+        setSortArrows(this, event.target);
         return false;
     });
 });

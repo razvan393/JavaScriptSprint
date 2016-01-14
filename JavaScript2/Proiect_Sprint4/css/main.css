@@ -7,7 +7,8 @@ input[disabled] {
 }
 
 .rating > span:hover,
-tbody td {
+tbody td,
+table th{
     cursor: pointer;
 }
 
@@ -58,7 +59,7 @@ table tbody p {
 }
 
 table p,
-table h4,
+table th,
 table tbody #buttons,
 table tbody #checkVisited,
 .pagination{
@@ -165,11 +166,7 @@ span{
     float: right;
     position: relative;
     height: 20px;
-}
-
-thead th h4{
-    width: 80%;
-    display: inline-block;
+    top: -5px;
 }
 
 .arrow-up {
@@ -243,6 +240,10 @@ h1 {
     padding:5px;
     text-align: center;
     width: 20px;
+}
+
+table th {
+    height: 45px;
 }
 
 

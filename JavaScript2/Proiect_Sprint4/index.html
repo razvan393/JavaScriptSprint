@@ -24,8 +24,9 @@
             <input type="hidden" id="checkEdit"/>
             <input name="checkbox" id="checkbox" type="checkbox"/>
             <label for="checkbox">Visited</label><br/>
-            <input id="save" class="btn" type="submit" value="Save"/>
-            <input id="cancel" class="btn" type="hidden" value="Cancel"/><br/>
+            <input id="save" class="btn" type="submit" value="Add"/><br/>
+            <input id="submit" class="btn hide" type="button" value="Submit"/>
+            <input id="cancel" class="btn hide" type="button" value="Cancel"/><br/>
             <input id="errors" class="hide" type="text" />
         </form>
     </div>
@@ -33,29 +34,29 @@
         <table id="the-table" class="table table-striped table-bordered table-responsive">
             <thead>
             <tr>
-                <th id="h-city" data-sort="desc">
-                    <h4>City</h4>
+                <th data-field="name" data-sort="desc">
+                    City
                     <div class="arrows">
                         <span class="arrow-up"></span>
                         <span class="arrow-down hide"></span>
                     </div>
                 </th>
-                <th id="h-stars" data-sort="desc">
-                    <h4>Stars</h4>
+                <th data-field="stars" data-sort="desc">
+                    Stars
                     <div class="arrows">
                         <span class="arrow-up"></span>
                         <span class="arrow-down"></span>
                     </div>
                 </th>
-                <th id="h-visited" data-sort="desc">
-                    <h4>Visited</h4>
+                <th data-field="visited" data-sort="desc">
+                    Visited
                     <div class="arrows">
                         <span class="arrow-up"></span>
                         <span class="arrow-down"></span>
                     </div>
                 </th>
-                <th id="h-actions">
-                    <h4>Actions</h4>
+                <th>
+                    Actions
                 </th>
             </tr>
             </thead>
@@ -69,7 +70,6 @@
             </tfoot>
         </table>
         <div class="pagination">
-            <input id="numarPagini" type="hidden" value="0" />
             <div id="page_number" class="page_number">1</div>
             <ul>
             </ul>
