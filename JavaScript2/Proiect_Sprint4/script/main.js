@@ -6,6 +6,8 @@ var currentPage = 1;
 var totalPages = 0;
 var sortField = "";
 var sortDir = "";
+var listOfGifs = [];
+var gifPosition = 0;
 
 var onSubmit = function () {
     var data = getFormData();
@@ -238,11 +240,14 @@ var giphy = function (name) {
     $giphyIframe.prop("src","");
 
     xhr.done(function(data) {
-        if(data.data[0]){
-            embedUrl = data.data[0].embed_url;
+        if(data.data.length != 0){
+            for (var i=0; i<data.data.length; i++){
+                listOfGifs[i] = data.data[i];
+            }
+            embedUrl = listOfGifs[0].embed_url;
         }
         else{
-            embedUrl = "https://giphy.com/embed/10oRQhnkcc72Le";
+            listOfGifs[0] = embedUrl = "https://giphy.com/embed/10oRQhnkcc72Le";
         }
         $giphyIframe.prop("src", embedUrl);
         $container.find("#giphy-container").attr("class","");
@@ -315,4 +320,23 @@ $(document).ready(function () {
         setSortArrows(this, event.target);
         return false;
     });
+    $container.find("#prevGiphy").on("click", function () {
+        setGiphy("-");
+        return false;
+    });
+    $container.find("#nextGiphy").on("click", function () {
+        setGiphy("+");
+        return false;
+    });
 });
+
+var setGiphy = function (name) {
+    if((gifPosition == 0) && (name == "-")){
+        gifPosition = listOfGifs.length-1;
+    }else if((gifPosition == (listOfGifs.length-1)) && (name == "+")) {
+        gifPosition = 0;
+    }else {
+        gifPosition = eval(gifPosition + name + "1");
+    }
+    $container.find("#giphy iframe").prop("src", listOfGifs[gifPosition].embed_url);
+};
