@@ -82,7 +82,7 @@ var drawTable = function () {
             hideLoader();
         },
         function (data) {
-            alert(data.error);
+            alert(data);
         });
 };
 
@@ -108,6 +108,9 @@ var deleteClicked = function () {
     var id = $(this).closest("tr").data("id");
 
     showLoader();
+    $form.find("#cancel").addClass("hide");
+    $form.find("#submit").addClass("hide");
+    $form.find("#save").removeClass("hide");
 
     store.delete(id).then(function () {
             drawTable();
@@ -115,7 +118,7 @@ var deleteClicked = function () {
             hideLoader();
         },
         function (data) {
-            alert(data.error);
+            alert(data);
         });
 };
 
@@ -140,7 +143,7 @@ var editClicked = function () {
             hideLoader();
         },
         function (data) {
-            alert(data.error);
+            alert(data);
         });
 };
 
@@ -150,16 +153,6 @@ var attachEvents = function () {
         onConfirm: deleteClicked,
         onReject: function (){
         }
-    });
-
-    $tabel.find("tbody .edit").on("click", editClicked);
-    $tabel.find(".city").on("click", function () {
-        var giphyName = ($(this).closest("tr").data("name"));
-
-        giphy(giphyName);
-    });
-    $container.find("#giphy").on("click", function () {
-        $container.find("#giphy-container").attr("class","hide");
     });
 };
 
@@ -276,9 +269,18 @@ $(document).ready(function () {
     $paginare = $(".pagination");
     $container = $(".container");
 
+    $tabel.on("click","tbody .edit", editClicked);
     drawTable(parseInt($paginare.find("#page_number").text()));
     $form.find("#result").stars();
     $form.submit(onSubmit);
+    $tabel.on("click",".city", function () {
+        var giphyName = ($(this).closest("tr").data("name"));
+
+        giphy(giphyName);
+    });
+    $container.on("click","#giphy", function () {
+        $container.find("#giphy-container").attr("class","hide");
+    });
 
     $form.find("#submit").click(function () {
         var locData = getFormData();
@@ -295,7 +297,7 @@ $(document).ready(function () {
             },
             function (data) {
                 hideLoader();
-                alert(data.error);
+                alert(data);
             });
         clearInputs();
     });
