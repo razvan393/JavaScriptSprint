@@ -1,7 +1,7 @@
-var $tabel ;
-var $form ;
-var $paginare ;
-var $container ;
+var $tabel;
+var $form;
+var $paginare;
+var $container;
 var currentPage = 1;
 var totalPages = 0;
 var sortField = "";
@@ -16,11 +16,11 @@ var onSubmit = function () {
 
     $form.find("#cancel").addClass("hide");
 
-    if(erori != ""){
-        $errors.attr("class","");
+    if (erori !== "") {
+        $errors.attr("class", "");
         $errors.val(erori);
-    }else {
-        $errors.attr("class","hide");
+    } else {
+        $errors.attr("class", "hide");
         store.add(data).then(function () {
             drawTable();
             $form.find("#checkEdit").val(0);
@@ -34,19 +34,18 @@ var getFormData = function () {
     var city = $form.find("#city").val();
     var visited = $form.find("#checkbox").is(":checked");
     var stars = $form.find("#result").val();
-    var dataObj = {
+    return {
         name: city,
         visited: visited ? 1 : 0,
         stars: parseInt(stars)
-    }
-    return dataObj;
+    };
 };
 
 var validateData = function (city, stars) {
-    var error = ""
-    if(!checkLength(city)){
+    var error = "";
+    if (!checkLength(city)) {
         error = "Introduce-ti un oras";
-    }else if(!checkStars(stars)){
+    } else if (!checkStars(stars)) {
         error = "Introduce-ti un rating";
     }
     return error;
@@ -64,22 +63,22 @@ var drawTable = function () {
     showLoader();
     $tabel.find("tbody").empty();
 
-    store.getAll(currentPage,sortField,sortDir).then(function (data) {
-            totalPages = data.totalPages;
-            $paginare.find("#totalPages").text(totalPages);
+    store.getAll(currentPage, sortField, sortDir).then(function (data) {
+        totalPages = data.totalPages;
+        $paginare.find("#totalPages").text(totalPages);
 
-            if (currentPage <= totalPages) {
-                if (data.list.length > 0) {
-                    $("tfoot").attr("class", "hide");
-                    populate(data.list);
-                }else {
-                    $("tfoot").attr("class", "");
-                }
-            }else {
-                currentPage = totalPages;
-                $paginare.find("#page_number").text(currentPage);
-                drawTable();
+        if (currentPage <= totalPages) {
+            if (data.list.length > 0) {
+                $("tfoot").attr("class", "hide");
+                populate(data.list);
+            } else {
+                $("tfoot").attr("class", "");
             }
+        } else {
+            currentPage = totalPages;
+            $paginare.find("#page_number").text(currentPage);
+            drawTable();
+        }
             createPages();
             hideLoader();
         },
@@ -136,7 +135,7 @@ var editClicked = function () {
     store.get(id).then(function (data) {
             $form.find("#city").val(data.name);
             $form.find("#result").val(data.stars).change();
-            if (data.visited == 1) {
+            if (data.visited === 1) {
                 $form.find("#checkbox").prop('checked', true);
             }
             else {
@@ -240,7 +239,7 @@ var giphy = function (name) {
     $giphyIframe.prop("src","");
 
     xhr.done(function(data) {
-        if(data.data.length != 0){
+        if(data.data.length !== 0){
             for (var i=0; i<data.data.length; i++){
                 listOfGifs[i] = data.data[i];
             }

@@ -1,5 +1,5 @@
 var store = (function () {
-    // private
+
     var apiUrl = "http://server.godev.ro:8080/api/razvan/entries";
     var headers = {
         'Content-Type': 'application/json'
@@ -7,15 +7,14 @@ var store = (function () {
 
     var errorHandler = function(reject) {
         return function (xhr) {
-            if(xhr.status == 409) {
+            if(xhr.status === 409) {
                 reject(xhr.responseJSON.error);
             } else {
-                alert('An unknown error occurred');
+                reject('An unknown error occurred');
             }
         };
     };
 
-    //public
     return {
         getAll: function (page, field, order) {
             return new Promise(function (resolve, reject) {
